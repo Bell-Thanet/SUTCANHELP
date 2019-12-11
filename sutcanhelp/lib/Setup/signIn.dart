@@ -19,113 +19,127 @@ class _LoginPageState extends State<LoginPage> {
       //   title: Text("login"),
       // ),
       backgroundColor: Colors.lightBlueAccent,
-
-      body: Container(
-        margin: MediaQuery.of(context).padding, //เว้นระยะขอบบนของโทรศัพย์
-        child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  child: Text("SUT",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 70,
-                        foreground: Paint()
-                          ..style = PaintingStyle.fill
-                          ..strokeWidth = 5
-                          ..color = Colors.white,
-                      )),
-                ),
-                Container(
-                  child: Text("CAN",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 70,
-                        foreground: Paint()
-                          ..style = PaintingStyle.fill
-                          ..strokeWidth = 5
-                          ..color = Colors.white,
-                      )),
-                ),
-                Container(
-                  child: Text("HELP",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 70,
-                        foreground: Paint()
-                          ..style = PaintingStyle.fill
-                          ..strokeWidth = 5
-                          ..color = Colors.white,
-                      )),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      width: 250,
-                      child: Text("FOR PUBLIC",
-                          // textAlign: TextAlign.right,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w900,
-                            fontSize: 25,
-                            foreground: Paint()
-                              ..style = PaintingStyle.fill
-                              ..strokeWidth = 10
-                              ..color = Colors.white,
-                          )),
-                    ),
-                  ],
-                ),
-                Container(
-                  width: 270,
-                  child: TextFormField(
-                    validator: (String input) {
-                      if (input.isEmpty) {
-                        return 'Provide an email';
-                      }
-                    },
-                    decoration: InputDecoration(labelText: 'USERNAME'),
-                    onSaved: (input) => _email = input,
+      resizeToAvoidBottomPadding: false,//ทำให้เลื่อนได้เวลาเปิดแป้นพิมพ์
+      body: SingleChildScrollView( //ทำให้เลื่อนได้เวลาเปิดแป้นพิมพ์
+              child: Container(
+          margin: MediaQuery.of(context).padding, //เว้นระยะขอบบนของโทรศัพย์
+          child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    child: Text("SUT",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 70,
+                          foreground: Paint()
+                            ..style = PaintingStyle.fill
+                            ..strokeWidth = 5
+                            ..color = Colors.white,
+                        )),
                   ),
-                ),
-                Container(
-                  width: 270,
-                  child: TextFormField(
-                    validator: (input) {
-                      if (input.length < 6) {
-                        return 'Longer password please';
-                      }
-                    },
-                    decoration: InputDecoration(labelText: 'PASSWORD'),
-                    onSaved: (input) => _password = input,
-                    obscureText: true,
+                  Container(
+                    child: Text("CAN",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 70,
+                          foreground: Paint()
+                            ..style = PaintingStyle.fill
+                            ..strokeWidth = 5
+                            ..color = Colors.white,
+                        )),
                   ),
-                ),
-                Padding(
-                  //กำหนดระยะห่างระหว่างทุกข้าง
-                  padding:
-                      const EdgeInsets.fromLTRB(0, 20.0, 0, 0), //ระยะห่างข้างๆ
-                  child: Container(
-                    child: RaisedButton(
-                      onPressed: signIn,
-                      child: Text('เข้าสู่ระบบ',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 25,
-                            foreground: Paint()
-                              ..style = PaintingStyle.fill
-                              ..strokeWidth = 10
-                              ..color = Colors.lightBlueAccent,
-                          )),
-                      color: Colors.white,
+                  Container(
+                    child: Text("HELP",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 70,
+                          foreground: Paint()
+                            ..style = PaintingStyle.fill
+                            ..strokeWidth = 5
+                            ..color = Colors.white,
+                        )),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                        width: 250,
+                        child: Text("FOR PUBLIC",
+                            // textAlign: TextAlign.right,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 25,
+                              foreground: Paint()
+                                ..style = PaintingStyle.fill
+                                ..strokeWidth = 10
+                                ..color = Colors.white,
+                            )),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    width: 270,
+                    child: TextFormField(
+                      validator: (String input) {
+                        if (input.isEmpty) {
+                          return 'Provide an email';
+                        }
+                      },
+                      decoration: InputDecoration(labelText: 'USERNAME'),
+                      onSaved: (input) => _email = input,
                     ),
                   ),
-                )
-              ],
-            )),
+                  Container(
+                    width: 270,
+                    child: TextFormField(
+                      validator: (input) {
+                        if (input.length < 6) {
+                          return 'Longer password please';
+                        }
+                      },
+                      decoration: InputDecoration(labelText: 'PASSWORD'),
+                      onSaved: (input) => _password = input,
+                      obscureText: true,
+                    ),
+                  ),
+                  Padding(
+                    //กำหนดระยะห่างระหว่างทุกข้าง
+                    padding:
+                        const EdgeInsets.fromLTRB(0, 20.0, 0, 0), //ระยะห่างข้างๆ
+                    child: Container(
+                      child: RaisedButton(
+                        onPressed: signIn,
+                        child: Text('เข้าสู่ระบบ',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 25,
+                              foreground: Paint()
+                                ..style = PaintingStyle.fill
+                                ..strokeWidth = 10
+                                ..color = Colors.lightBlueAccent,
+                            )),
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(160, 10, 0, 0),
+                    child: Text("ยังไม่เป็นสมาชิก",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 18,
+                          foreground: Paint()
+                            ..style = PaintingStyle.fill
+                            ..strokeWidth = 5
+                            ..color = Colors.white,
+                        )),
+                  )
+                ],
+              )),
+        ),
       ),
     );
   }
