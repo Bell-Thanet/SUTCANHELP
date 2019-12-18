@@ -34,6 +34,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233996474656:android:1a413163b4d11683401f45",
+        "android_client_info": {
+          "package_name": "com.project.sutcan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "233996474656-6pusa2be1ujlqvp7hkkk0mbab5q2rj84.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiAB2XrlQLrwJXmHmEpPbHBRrKpv0UMUk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "233996474656-6pusa2be1ujlqvp7hkkk0mbab5q2rj84.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

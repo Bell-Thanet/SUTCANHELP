@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Setup/signIn.dart';
+import 'Pages/signIn.dart';
 
 void main() => runApp(AppNew());
 
@@ -13,7 +13,7 @@ class AppNew extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: Scaffold(
-          // backgroundColor: Colors.lightBlueAccent,
+          backgroundColor: Colors.lightBlueAccent,
           body: LoginPage(),
         ));
   }
