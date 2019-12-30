@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:sutcanhelp/Pages/homepage.dart';
 import 'package:sutcanhelp/Pages/signIn.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -13,6 +14,18 @@ class _RegisterPageState extends State<RegisterPage> {
   final formKey = GlobalKey<FormState>();
   String emailString, passString, nameString, repassString;
   // Method
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   setnull();
+  // }
+
+  // void setnull() {
+  //   emailString = 'null';
+  //   passString = null;
+  //   repassString = null;
+  //   nameString = null;
+  // }
 
   Widget registerButton() {
     return RaisedButton(
@@ -22,8 +35,12 @@ class _RegisterPageState extends State<RegisterPage> {
           formKey.currentState.save();
           print(
               'Username = $emailString, password = $passString, name = $nameString');
-
-          registerThread();
+          print('Password = $passString, Repassword = $repassString');
+          if (passString == repassString) {
+            registerThread();
+          } else {
+            passAlert();
+          }
         }
       },
       child: Text('สมัครสมาชิก',
@@ -65,8 +82,8 @@ class _RegisterPageState extends State<RegisterPage> {
         onPressed: () {
           print("ยกเลิก");
           MaterialPageRoute materialPageRoute =
-              MaterialPageRoute(builder: (BuildContext context) => LoginPage());
-          Navigator.of(context).push(materialPageRoute);
+              MaterialPageRoute(builder: (BuildContext context) => HomePage());
+          Navigator.of(context).push(materialPageRoute); //
         },
         color: Colors.white);
   }
@@ -132,6 +149,7 @@ class _RegisterPageState extends State<RegisterPage> {
       onSaved: (String pass) {
         passString = pass;
       },
+      obscureText: true,
     );
   }
 
@@ -150,7 +168,7 @@ class _RegisterPageState extends State<RegisterPage> {
           )),
       validator: (String value) {
         if (((value.length < 6) || (/*checkpass()*/ false))) {
-          return 'password not match';
+          return 'password More 6 Charactor';
         } else {
           return null;
         }
@@ -158,6 +176,7 @@ class _RegisterPageState extends State<RegisterPage> {
       onSaved: (String repass) {
         repassString = repass;
       },
+      obscureText: true,
     );
   }
 
@@ -254,6 +273,42 @@ class _RegisterPageState extends State<RegisterPage> {
         });
   }
 
+  void passAlert() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Password Not match'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  void successRegister() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Register Success'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
 // var userUid;
 
 //   Future<String> inputData() async {
@@ -271,6 +326,10 @@ class _RegisterPageState extends State<RegisterPage> {
       'Password': passString,
       'Name': nameString,
     });
+    // setState(() {
+    //   setnull();
+    // });
+    successRegister();
   }
 
   @override
