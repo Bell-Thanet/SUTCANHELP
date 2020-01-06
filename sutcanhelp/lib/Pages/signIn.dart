@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sutcanhelp/Pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:sutcanhelp/Pages/register.dart';
@@ -10,8 +11,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   @override
-  
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _email, _password;
 
@@ -72,7 +71,19 @@ class _LoginPageState extends State<LoginPage> {
           return 'Provide an email';
         }
       },
-      decoration: InputDecoration(labelText: 'EMAIL'),
+      decoration: InputDecoration(
+        hintText: "Email",
+        hintStyle: TextStyle(
+          color: Colors.black54,
+          fontSize: 16.0,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        hoverColor: Colors.amber,
+        fillColor: Colors.amber,
+        prefixIcon: Icon(Icons.email),
+      ),
       onSaved: (input) => _email = input,
     );
   }
@@ -84,27 +95,71 @@ class _LoginPageState extends State<LoginPage> {
           return 'Longer password please';
         }
       },
-      decoration: InputDecoration(labelText: 'PASSWORD'),
+      decoration: InputDecoration(
+          hintText: "Password",
+          hintStyle: TextStyle(
+            color: Colors.black54,
+            fontSize: 16.0,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          prefixIcon: Icon(Icons.lock),
+          suffixIcon: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.visibility_off),
+          )),
       onSaved: (input) => _password = input,
       obscureText: true,
     );
   }
 
   Widget singInButton() {
-    return RaisedButton(
+    return Material(
+      borderRadius: BorderRadius.circular(30.0),
+      shadowColor: Colors.black54,
+      elevation: 5.0,
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width,
+        height: 56.0,
         onPressed: signIn,
-        child: Text('เข้าสู่ระบบ',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 25,
-              foreground: Paint()
-                ..style = PaintingStyle.fill
-                ..strokeWidth = 10
-                ..color = Colors.lightBlueAccent,
-            )),
-        color: Colors.white);
+        child: Text(
+          'Login',
+          style: TextStyle(
+            color: Colors.lightBlue,
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      color: Colors.white,
+    );
   }
+
+  // Widget singInButton() {
+  //   return Container(
+  //     height: 56.0,
+  //     width: MediaQuery.of(context).size.width,
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(23.0),
+  //       gradient: LinearGradient(
+  //         colors: [Color(0xFFFB4158), Color(0xFFEE5623)],
+  //         begin: Alignment.centerRight,
+  //         end: Alignment.centerLeft,
+  //       ),
+  //     ),
+  //     child: GestureDetector(
+  //       onTap: signIn,
+  //       child: Text(
+  //         'Login',
+  //         style: TextStyle(
+  //           color: Colors.lightBlueAccent,
+  //           fontSize: 25.0,
+  //         ),
+  //       ),
+
+  //     ),
+  //   );
 
   Widget toRegister() {
     return FlatButton(
@@ -116,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
           foreground: Paint()
             ..style = PaintingStyle.fill
             ..strokeWidth = 5
-            ..color = Colors.white,
+            ..color = Colors.grey[700],
         ),
       ),
       onPressed: () {
@@ -181,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
           child: ListView(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: Column(
                   children: <Widget>[
                     Column(
@@ -201,10 +256,13 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+                      padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
                       child: Column(
                         children: <Widget>[
                           emailText(),
+                          SizedBox(
+                            height: 20.0,
+                          ),
                           passTesxt(),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
@@ -214,7 +272,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         toRegister(),
                       ],

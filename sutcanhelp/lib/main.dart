@@ -31,7 +31,7 @@
 // // }
 
 import 'package:flutter/material.dart';
-import 'package:sutcanhelp/Pages/homepage.dart';
+import 'package:sutcanhelp/Pages/pageone.dart';
 
 void main() {
   runApp(MyApp());
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'SUT CAN HELP',
       color: Colors.lightBlueAccent,
-      home: HomePage(),
+      home: Pageone(),
     );
   }
 }
