@@ -147,7 +147,7 @@ class _HomeState extends State<Home> {
             image: (pullURL != null)
                 ? NetworkImage('$pullURL')
                 : NetworkImage(
-                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQi_nU0JuTprlRVJlFPeH1Zg_40oM6rNiA6z0Mytffx44P0EiUg4w&s'),
+                    'https://fiverr-res.cloudinary.com/images/t_main1,q_auto,f_auto/gigs/98381915/original/9a98da91fcc1709763e92016d13756af640abcb7/design-minimalist-flat-line-vector-avatar-of-you.jpg'),
             fit: BoxFit.fill,
           )),
     );
