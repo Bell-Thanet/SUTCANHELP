@@ -322,15 +322,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<bool> loader() {
     return showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: load(),
-          backgroundColor: Colors.lightBlue[400],
-        );
-      }
-    );
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: load(),
+            backgroundColor: Colors.lightBlue[400],
+          );
+        });
   }
 
   void successRegister() {

@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:sutcanhelp/Pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:sutcanhelp/Pages/register.dart';
+import 'package:sutcanhelp/widget/loading.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _email, _password;
+  bool loading = false;
 
   Widget sutText() {
     return Text("SUT",
@@ -136,31 +138,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // Widget singInButton() {
-  //   return Container(
-  //     height: 56.0,
-  //     width: MediaQuery.of(context).size.width,
-  //     decoration: BoxDecoration(
-  //       borderRadius: BorderRadius.circular(23.0),
-  //       gradient: LinearGradient(
-  //         colors: [Color(0xFFFB4158), Color(0xFFEE5623)],
-  //         begin: Alignment.centerRight,
-  //         end: Alignment.centerLeft,
-  //       ),
-  //     ),
-  //     child: GestureDetector(
-  //       onTap: signIn,
-  //       child: Text(
-  //         'Login',
-  //         style: TextStyle(
-  //           color: Colors.lightBlueAccent,
-  //           fontSize: 25.0,
-  //         ),
-  //       ),
-
-  //     ),
-  //   );
-
   Widget toRegister() {
     return FlatButton(
       child: Text(
@@ -190,100 +167,99 @@ class _LoginPageState extends State<LoginPage> {
         AuthResult result = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
         FirebaseUser user = result.user;
-
+        setState(() {
+          loading = true;
+        });
         MaterialPageRoute materialPageRoute =
             MaterialPageRoute(builder: (BuildContext context) => Home());
         Navigator.of(context).pushAndRemoveUntil(
             materialPageRoute, (Route<dynamic> route) => false);
       } catch (e) {
         print(e.message);
-        signInAlert();
+        signInAlert(e);
+        setState(() {
+          loading = false;
+        });
       }
     }
   }
 
-  void signInAlert() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(
-              'Invalid Username or Password',
-              style: TextStyle(color: Colors.red),
-            ),
-            actions: <Widget>[okButton()],
-          );
-        });
-  }
-
-  Widget okButton() {
-    return FlatButton(
-      child: Text('OK'),
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-    );
+  void signInAlert(e) {
+    Alert(context: context, title: 'Invalid Username or Password', buttons: [
+      DialogButton(
+        child: Text(
+          'OK',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+        ),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      )
+    ]).show();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.lightBlueAccent,
-      body: Container(
-        margin: MediaQuery.of(context).padding,
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: Column(
+    return loading
+        ? Loading()
+        : Scaffold(
+            backgroundColor: Colors.lightBlueAccent,
+            body: Container(
+              margin: MediaQuery.of(context).padding,
+              child: Form(
+                key: _formKey,
+                child: ListView(
                   children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        sutText(),
-                        canText(),
-                        helpText(),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 65, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              forpuText(),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                       child: Column(
                         children: <Widget>[
-                          emailText(),
-                          SizedBox(
-                            height: 20.0,
+                          Column(
+                            children: <Widget>[
+                              sutText(),
+                              canText(),
+                              helpText(),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 65, 0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    forpuText(),
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
-                          passTesxt(),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                            child: singInButton(),
+                            padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
+                            child: Column(
+                              children: <Widget>[
+                                emailText(),
+                                SizedBox(
+                                  height: 20.0,
+                                ),
+                                passTesxt(),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                  child: singInButton(),
+                                ),
+                              ],
+                            ),
                           ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              toRegister(),
+                            ],
+                          )
                         ],
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        toRegister(),
-                      ],
                     )
                   ],
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+              ),
+            ),
+          );
   }
 }

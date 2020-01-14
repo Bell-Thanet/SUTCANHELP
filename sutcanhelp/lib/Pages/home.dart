@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sutcanhelp/Pages/pageone.dart';
 import 'package:sutcanhelp/Pages/signIn.dart';
+import 'package:sutcanhelp/Pages/profile.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -15,27 +16,16 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   String emailLogin = '...';
   String name = '...';
-  String uids = '2B9610HE5nc3UMru74qseGrSVer2';
+  String uids = '';
+  String pullURL;
   FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
+  // Widget currentWidget = Home();
 
-  List<myData> allData = [];
   @override
   void initState() {
     findDisplayName();
     getdata();
-    //   DatabaseReference ref = FirebaseDatabase.instance.reference();
-    //   ref.child('Users').once().then((DataSnapshot snap) {
-    //     var keys = snap.value.uids;
-    //     var data = snap.value;
-    //     allData.clear();
-    // for(var key in keys){
-    //   myData d = new myData(
-    //     data[key]['Email'],
-    //     data[key]['Name'],
-    //   );
-    //   allData.add(d);
-    // }
-    //   });
+    showDrawer();
     super.initState();
   }
 
@@ -50,6 +40,7 @@ class _HomeState extends State<Home> {
           print(values['Email']);
           setState(() {
             name = values['Name'];
+            pullURL = values['URL'];
           });
           print(values['Name']);
         }
@@ -125,9 +116,8 @@ class _HomeState extends State<Home> {
       child: ListView(
         children: <Widget>[
           showHeader(),
-          Center(
-              child: Text('$name',
-                  style: TextStyle(fontSize: 20.0, color: Colors.black)))
+          profileList(),
+          logoutList(),
         ],
       ),
     );
@@ -138,7 +128,8 @@ class _HomeState extends State<Home> {
       child: Column(
         children: <Widget>[
           showLogoActor(),
-          SizedBox(height: 20.0),
+          SizedBox(height: 15.0),
+          showNameLogin(),
           showEmailLogin(),
         ],
       ),
@@ -150,7 +141,15 @@ class _HomeState extends State<Home> {
     return Container(
       width: 80.0,
       height: 80.0,
-      child: Image.asset('images/logoActor.jpg'),
+      decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            image: (pullURL != null)
+                ? NetworkImage('$pullURL')
+                : NetworkImage(
+                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQi_nU0JuTprlRVJlFPeH1Zg_40oM6rNiA6z0Mytffx44P0EiUg4w&s'),
+            fit: BoxFit.fill,
+          )),
     );
   }
 
@@ -167,7 +166,66 @@ class _HomeState extends State<Home> {
   Widget showEmailLogin() {
     return Text(
       '$emailLogin',
+      style: TextStyle(
+        fontSize: 15.0,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  Widget showNameLogin() {
+    return Text(
+      '$name',
       style: TextStyle(fontSize: 20.0, color: Colors.white),
+    );
+  }
+
+  Widget profileList() {
+    return ListTile(
+      leading: Icon(Icons.person),
+      title: Text('Profile',
+          style: TextStyle(
+            fontSize: 18.0,
+          )),
+      onTap: () {
+          MaterialPageRoute materialPageRoute =
+            MaterialPageRoute(builder: (BuildContext context) => Profile());
+        Navigator.of(context).pushAndRemoveUntil(
+            materialPageRoute, (Route<dynamic> route) => false);
+
+
+        // MaterialPageRoute materialPageRoute =
+        //     MaterialPageRoute(builder: (BuildContext context) => Profile());
+        // Navigator.of(context).push(materialPageRoute);
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => Profile(),
+        //         settings: RouteSettings(arguments: 'aaaa')));
+      },
+    );
+  }
+
+  Widget logoutList() {
+    return ListTile(
+      leading: Icon(Icons.arrow_back),
+      title: Text(
+        'Logout',
+        style: TextStyle(
+          fontSize: 18.0,
+        ),
+      ),
+      onTap: () {
+        // loader1();
+        // setState(() {
+        //   loaded = false;
+        // });
+        // Timer(Duration(seconds: 5), () {
+        //   Navigator.of(context).pop();
+        // });
+        // // loader1();
+        myAlert();
+      },
     );
   }
 
@@ -219,8 +277,4 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-}
-
-class myData {
-  myData(data, data2);
 }
