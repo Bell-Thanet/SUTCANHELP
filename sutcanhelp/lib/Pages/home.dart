@@ -5,7 +5,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sutcanhelp/Pages/pageone.dart';
-import 'package:sutcanhelp/Pages/signIn.dart';
 import 'package:sutcanhelp/Pages/profile.dart';
 
 class Home extends StatefulWidget {
@@ -17,7 +16,7 @@ class _HomeState extends State<Home> {
   String emailLogin = '...';
   String name = '...';
   String uids = '';
-  String pullURL;
+  String pullURL = '';
   FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
   // Widget currentWidget = Home();
 
@@ -26,6 +25,7 @@ class _HomeState extends State<Home> {
     findDisplayName();
     getdata();
     showDrawer();
+    showHeader();
     super.initState();
   }
 
@@ -44,7 +44,6 @@ class _HomeState extends State<Home> {
           });
           print(values['Name']);
         }
-
         // print(values['Name']);
       });
     });
@@ -137,20 +136,47 @@ class _HomeState extends State<Home> {
     );
   }
 
+  // Widget showLogoActornull() {
+  //   return Container(
+  //     width: 80.0,
+  //     height: 80.0,
+  //     decoration: BoxDecoration(
+  //         shape: BoxShape.circle,
+  //         image: DecorationImage(
+  //           image: (pullURL != null)
+  //               ? NetworkImage('$pullURL')
+  //               : NetworkImage(
+  //                   'https://fiverr-res.cloudinary.com/images/t_main1,q_auto,f_auto/gigs/98381915/original/9a98da91fcc1709763e92016d13756af640abcb7/design-minimalist-flat-line-vector-avatar-of-you.jpg'),
+  //           fit: BoxFit.fill,
+  //         )),
+  //   );
+  // }
   Widget showLogoActor() {
-    return Container(
-      width: 80.0,
-      height: 80.0,
-      decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            image: (pullURL != null)
-                ? NetworkImage('$pullURL')
-                : NetworkImage(
-                    'https://fiverr-res.cloudinary.com/images/t_main1,q_auto,f_auto/gigs/98381915/original/9a98da91fcc1709763e92016d13756af640abcb7/design-minimalist-flat-line-vector-avatar-of-you.jpg'),
-            fit: BoxFit.fill,
-          )),
-    );
+    if (pullURL != null) {
+      return pullURL.isNotEmpty
+          ? Container(
+              width: 80.0,
+              height: 80.0,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: NetworkImage('$pullURL'),
+                    fit: BoxFit.fill,
+                  )),
+            )
+          : Container();
+    } else {
+      return Container(
+        width: 80.0,
+        height: 80.0,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: AssetImage('images/logoActor.jpg'),
+              fit: BoxFit.fill,
+            )),
+      );
+    }
   }
 
   Future<void> findDisplayName() async {
@@ -188,11 +214,10 @@ class _HomeState extends State<Home> {
             fontSize: 18.0,
           )),
       onTap: () {
-          MaterialPageRoute materialPageRoute =
+        MaterialPageRoute materialPageRoute =
             MaterialPageRoute(builder: (BuildContext context) => Profile());
         Navigator.of(context).pushAndRemoveUntil(
             materialPageRoute, (Route<dynamic> route) => false);
-
 
         // MaterialPageRoute materialPageRoute =
         //     MaterialPageRoute(builder: (BuildContext context) => Profile());

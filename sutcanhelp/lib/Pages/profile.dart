@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:sutcanhelp/Pages/home.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart';
+// import 'package:path/path.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -29,21 +30,33 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget showLogoActor() {
-    return Container(
-      width: 200.0,
-      height: 200.0,
-      decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: (pullURL1 != null)
-              ? DecorationImage(
-                  image: NetworkImage('$pullURL1'),
-                  fit: BoxFit.fill,
-                )
-              : DecorationImage(
-                  image: NetworkImage('https://fiverr-res.cloudinary.com/images/t_main1,q_auto,f_auto/gigs/98381915/original/9a98da91fcc1709763e92016d13756af640abcb7/design-minimalist-flat-line-vector-avatar-of-you.jpg'),
-                  fit: BoxFit.fill,
-                )),
-    );
+    if (_image != null) {
+      return Image.file(_image, fit: BoxFit.fill);
+    } else if (pullURL1 != null) {
+      return pullURL1.isNotEmpty
+          ? Container(
+              width: 200.0,
+              height: 200.0,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: NetworkImage('$pullURL1'),
+                    fit: BoxFit.fill,
+                  )),
+            )
+          : Container();
+    } else {
+      return Container(
+        width: 200.0,
+        height: 200.0,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: AssetImage('images/logoActor.jpg'),
+              fit: BoxFit.fill,
+            )),
+      );
+    }
   }
 
   Widget showEmailLogin() {
@@ -97,20 +110,17 @@ class _ProfileState extends State<Profile> {
       radius: 70.0,
       backgroundColor: Colors.blue[900],
       child: ClipOval(
-        child: SizedBox(
-            width: 120.0,
-            height: 120.0,
-            child: (_image != null)
-                ? Image.file(_image, fit: BoxFit.fill)
-                // ? Image.network(
-                //     pullURL1,
-                //     fit: BoxFit.fill,
-                //   )
-                : showLogoActor()
-            // : Image.network(
-            //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQJR6BqqLi6y004j182y-DQqexGNssQn5AHlZ7DUBXpYQe3H7P&s',
-            //     fit: BoxFit.fill,
-            //   ),
+        child: SizedBox(width: 120.0, height: 120.0, child: showLogoActor()
+            //     ? Image.file(_image, fit: BoxFit.fill)
+            //     // ? Image.network(
+            //     //     pullURL1,
+            //     //     fit: BoxFit.fill,
+            //     //   )
+            //     : showLogoActor()
+            // // : Image.network(
+            // //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQJR6BqqLi6y004j182y-DQqexGNssQn5AHlZ7DUBXpYQe3H7P&s',
+            // //     fit: BoxFit.fill,
+            // //   ),
             ),
       ),
     );
@@ -118,16 +128,39 @@ class _ProfileState extends State<Profile> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    print(image.lengthSync());
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: image.path,
+        compressQuality: 30,
+        maxHeight: 200,
+        maxWidth: 200,
+        cropStyle: CropStyle.circle,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          minimumAspectRatio: 1.0,
+        ));
     setState(() {
-      _image = image;
+      _image = croppedFile;
       print("Impge Patn $_image");
     });
   }
 
   Future uploadPhoto(BuildContext context) async {
-    String filName = basename(_image.path);
+    // String filName = basename(_image.path);
     StorageReference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child('ProfileUsers').child(filName);
+        FirebaseStorage.instance.ref().child('ProfileUsers').child(uids);
 
     StorageUploadTask storageUploadTask = firebaseStorageRef.putFile(_image);
     // StorageTaskSnapshot taskSnapshot = await storageUploadTask.onComplete;

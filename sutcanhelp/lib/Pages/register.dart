@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:sutcanhelp/Pages/pageone.dart';
-import 'package:sutcanhelp/Pages/signIn.dart';
+// import 'package:sutcanhelp/Pages/signIn.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -18,19 +19,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final formKey = GlobalKey<FormState>();
   String emailString, passString, nameString, repassString;
   bool loaded = true;
-  // Method
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   setnull();
-  // }
-
-  // void setnull() {
-  //   emailString = 'null';
-  //   passString = null;
-  //   repassString = null;
-  //   nameString = null;
-  // }
+  // final DocumentReference documentReference =
+  //     Firestore.instance.document('sdsassssa/dsfqweqwe');
 
   Widget registerButton() {
     return Material(
@@ -245,39 +235,6 @@ class _RegisterPageState extends State<RegisterPage> {
   //   }
   // }
 
-  Future<void> registerThread() async {
-    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    await firebaseAuth
-        .createUserWithEmailAndPassword(
-            email: emailString, password: passString)
-        .then((currentUser) {
-      // inputData();
-      loader();
-      setState(() {
-        loaded = false;
-      });
-      Timer(Duration(seconds: 2), () {
-        Navigator.of(context).pop();
-        setupUser();
-      });
-
-      print('Register Success for Email = $emailString');
-    }).catchError((response) {
-      String title = response.code;
-      String message = response.message;
-      print('title = $title, message = $message');
-
-      setState(() {
-        loader();
-        loaded = false;
-      });
-      Timer(Duration(seconds: 2), () {
-        Navigator.of(context).pop();
-        myAlert(title, message);
-      });
-    });
-  }
-
   void myAlert(title, message) {
     Alert(
         context: context,
@@ -355,7 +312,64 @@ class _RegisterPageState extends State<RegisterPage> {
 //     userUid = user.uid.toString();
 //     return userUid;
 //   }
+  Future<void> registerThread() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth
+        .createUserWithEmailAndPassword(
+            email: emailString, password: passString)
+        .then((currentUser) {
+      // inputData();
+      loader();
+      setState(() {
+        loaded = false;
+      });
+      Timer(Duration(seconds: 2), () {
+        Navigator.of(context).pop();
+        setupUser();
+      });
 
+      print('Register Success for Email = $emailString');
+    }).catchError((response) {
+      String title = response.code;
+      String message = response.message;
+      print('title = $title, message = $message');
+
+      setState(() {
+        loader();
+        loaded = false;
+      });
+      Timer(Duration(seconds: 2), () {
+        Navigator.of(context).pop();
+        myAlert(title, message);
+      });
+    });
+  }
+
+  // Future<void> setupUser() async {
+  //   Map<String, String> data = <String, String>{
+  //     "Email": emailString,
+  //     "Password": passString,
+  //     "Name": nameString,
+  //     "URL": ""
+  //   };
+  //   documentReference.setData(data).whenComplete(() {
+  //     print(
+  //         "Email: $emailString /t Password: $passString /t Name: $nameString /t URL: null ");
+  //   }).catchError((e) => print(e));
+
+  //   // setState(() {
+  //   //   setnull();
+  //   // });
+  //   successRegister();
+  // }
+
+  Widget bbb() {
+    return DialogButton(
+        child: null,
+        onPressed: () {
+          setupUser();
+        });
+  }
   Future<void> setupUser() async {
     DatabaseReference firebaseAuth = FirebaseDatabase.instance.reference();
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
@@ -401,7 +415,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   SizedBox(height: 30.0),
                   registerButton(),
                   SizedBox(height: 15.0),
-                  cancelButton(),
+                  cancelButton(), bbb()
                   // Padding(
                   //   padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                   //   child: Row(

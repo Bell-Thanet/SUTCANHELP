@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sutcanhelp/Pages/home.dart';
 import 'package:sutcanhelp/Pages/register.dart';
 import 'package:sutcanhelp/Pages/signIn.dart';
-import 'package:loading_indicator/loading_indicator.dart';
+
 
 
 class Pageone extends StatefulWidget {
@@ -13,7 +13,6 @@ class Pageone extends StatefulWidget {
 
 class _PageoneState extends State<Pageone> {
    void initState() {
-    // TODO: implement initState
     super.initState();
     checkStatus();
   }
