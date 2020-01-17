@@ -7,7 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:sutcanhelp/Pages/pageone.dart';
 // import 'package:sutcanhelp/Pages/signIn.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -19,8 +19,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final formKey = GlobalKey<FormState>();
   String emailString, passString, nameString, repassString;
   bool loaded = true;
-  // final DocumentReference documentReference =
-  //     Firestore.instance.document('sdsassssa/dsfqweqwe');
 
   Widget registerButton() {
     return Material(
@@ -345,40 +343,23 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  // Future<void> setupUser() async {
-  //   Map<String, String> data = <String, String>{
-  //     "Email": emailString,
-  //     "Password": passString,
-  //     "Name": nameString,
-  //     "URL": ""
-  //   };
-  //   documentReference.setData(data).whenComplete(() {
-  //     print(
-  //         "Email: $emailString /t Password: $passString /t Name: $nameString /t URL: null ");
-  //   }).catchError((e) => print(e));
-
-  //   // setState(() {
-  //   //   setnull();
-  //   // });
-  //   successRegister();
-  // }
-
-  Widget bbb() {
-    return DialogButton(
-        child: null,
-        onPressed: () {
-          setupUser();
-        });
-  }
   Future<void> setupUser() async {
-    DatabaseReference firebaseAuth = FirebaseDatabase.instance.reference();
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     var userid = user.uid.toString();
-    await firebaseAuth.child("Users").child(userid).set({
-      'Email': emailString,
-      'Password': passString,
-      'Name': nameString,
-    });
+
+    final DocumentReference documentReference =
+        Firestore.instance.collection('Users').document(userid);
+    Map<String, String> data = <String, String>{
+      "Email": emailString,
+      "Password": passString,
+      "Name": nameString,
+      "URL": "null"
+    };
+    documentReference.setData(data).whenComplete(() {
+      print(
+          "Email: $emailString /t Password: $passString /t Name: $nameString /t URL: null ");
+    }).catchError((e) => print(e));
+
     // setState(() {
     //   setnull();
     // });
@@ -415,7 +396,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   SizedBox(height: 30.0),
                   registerButton(),
                   SizedBox(height: 15.0),
-                  cancelButton(), bbb()
+                  cancelButton(),
                   // Padding(
                   //   padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                   //   child: Row(

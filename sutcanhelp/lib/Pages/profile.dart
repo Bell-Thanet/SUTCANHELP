@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+// import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:sutcanhelp/Pages/home.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,28 +21,30 @@ class _ProfileState extends State<Profile> {
 
   String emailLogin = '...';
   String name = '...';
-  String uids = '..';
-  String pullURL1 = '';
+  String uids = '';
+  String pullURL = '';
   FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
+
+
   @override
   void initState() {
+    super.initState();
     findDisplayName();
     getdata();
-    super.initState();
   }
 
   Widget showLogoActor() {
     if (_image != null) {
       return Image.file(_image, fit: BoxFit.fill);
-    } else if (pullURL1 != null) {
-      return pullURL1.isNotEmpty
+    } else if (pullURL != 'null') {
+      return pullURL.isNotEmpty
           ? Container(
               width: 200.0,
               height: 200.0,
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: NetworkImage('$pullURL1'),
+                    image: NetworkImage('$pullURL'),
                     fit: BoxFit.fill,
                   )),
             )
@@ -73,39 +77,7 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  void getdata() async {
-    DatabaseReference databaseReference =
-        firebaseDatabase.reference().child('Users');
-    await databaseReference.once().then((DataSnapshot dataSnapshot) {
-      // print('Data ==> ${datasnapshot.value}');
-      Map<dynamic, dynamic> values = dataSnapshot.value;
-      values.forEach((key, values) {
-        if (key == uids) {
-          print(values['Email']);
-          setState(() {
-            name = values['Name'];
-            pullURL1 = values['URL'];
-          });
-          print('Start Pull URL $pullURL1');
-          print(values['Name']);
-        }
-
-        // print(values['Name']);
-      });
-    });
-  }
-
-  Future<void> findDisplayName() async {
-    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
-    setState(() {
-      emailLogin = firebaseUser.email;
-      uids = firebaseUser.uid;
-    });
-    return emailLogin;
-  }
-
-  Widget logoA() {
+  Widget logoCircle() {
     return CircleAvatar(
       radius: 70.0,
       backgroundColor: Colors.blue[900],
@@ -124,6 +96,43 @@ class _ProfileState extends State<Profile> {
             ),
       ),
     );
+  }
+
+  Widget buttonupdatePhoto() {
+    return IconButton(
+      icon: Icon(Icons.camera),
+      onPressed: () {
+        getImage();
+      },
+      iconSize: 30.0,
+    );
+  }
+
+  void getdata() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
+    String uids = firebaseUser.uid;
+    final DocumentReference documentReference =
+        Firestore.instance.document('Users/$uids');
+    documentReference.get().then((datasnapshot) {
+      if (datasnapshot.exists) {
+        setState(() {
+          name = datasnapshot.data['Name'];
+          pullURL = datasnapshot.data['URL'];
+          print('Name = $name /t URL = $pullURL');
+        });
+      }
+    });
+  }
+
+  Future<void> findDisplayName() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
+    setState(() {
+      emailLogin = firebaseUser.email;
+      uids = firebaseUser.uid;
+    });
+    return emailLogin;
   }
 
   Future getImage() async {
@@ -159,6 +168,8 @@ class _ProfileState extends State<Profile> {
 
   Future uploadPhoto(BuildContext context) async {
     // String filName = basename(_image.path);
+    print(_image.lengthSync());
+
     StorageReference firebaseStorageRef =
         FirebaseStorage.instance.ref().child('ProfileUsers').child(uids);
 
@@ -179,26 +190,19 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> setURLImage(url) async {
-    DatabaseReference firebaseAuth = FirebaseDatabase.instance.reference();
+    // final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    var userid = user.uid.toString();
-    await firebaseAuth.child("Users").child(userid).update({
-      'URL': url,
-    });
-    setState(() {
-      pullURL1 = url;
-    });
-    print('Update URL image To $uids and Sucess');
-  }
-
-  Widget buttonupdatePhoto() {
-    return IconButton(
-      icon: Icon(Icons.camera),
-      onPressed: () {
-        getImage();
-      },
-      iconSize: 30.0,
-    );
+    var uids = user.uid.toString();
+    final DocumentReference documentReference =
+        Firestore.instance.document('Users/$uids');
+    Map<String, String> data = <String, String>{"URL": url};
+    documentReference.updateData(data).whenComplete(() {
+      setState(() {
+        pullURL = url;
+        print('Update URL image To $uids and Sucess');
+      });
+    }).catchError((e) => print(e));
   }
 
   @override
@@ -241,7 +245,7 @@ class _ProfileState extends State<Profile> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                logoA(),
+                logoCircle(),
                 Padding(
                   padding: const EdgeInsets.only(top: 90.0),
                   child: buttonupdatePhoto(),
@@ -257,6 +261,7 @@ class _ProfileState extends State<Profile> {
           ],
         )),
       ),
+      // bottomNavigationBar: BottomNavigationProfile()
     );
   }
 }

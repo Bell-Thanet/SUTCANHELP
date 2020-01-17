@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sutcanhelp/Pages/home.dart';
 import 'package:sutcanhelp/Pages/register.dart';
 import 'package:sutcanhelp/Pages/signIn.dart';
+import 'package:sutcanhelp/widget/bottomNavigation.dart';
 
 
 
@@ -16,13 +17,14 @@ class _PageoneState extends State<Pageone> {
     super.initState();
     checkStatus();
   }
+  
 
   Future<void> checkStatus() async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     FirebaseUser firebaseUser = await firebaseAuth.currentUser();
     if (firebaseUser != null) {
       MaterialPageRoute materialPageRoute =
-          MaterialPageRoute(builder: (BuildContext context) => Home());
+          MaterialPageRoute(builder: (BuildContext context) => BottomNavigation());
       Navigator.of(context).pushAndRemoveUntil(
           materialPageRoute, (Route<dynamic> route) => false);
     }

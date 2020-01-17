@@ -3,6 +3,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:sutcanhelp/Pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:sutcanhelp/Pages/register.dart';
+import 'package:sutcanhelp/widget/bottomNavigation.dart';
 import 'package:sutcanhelp/widget/loading.dart';
 
 class LoginPage extends StatefulWidget {
@@ -171,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
           loading = true;
         });
         MaterialPageRoute materialPageRoute =
-            MaterialPageRoute(builder: (BuildContext context) => Home());
+            MaterialPageRoute(builder: (BuildContext context) => BottomNavigation());
         Navigator.of(context).pushAndRemoveUntil(
             materialPageRoute, (Route<dynamic> route) => false);
       } catch (e) {
