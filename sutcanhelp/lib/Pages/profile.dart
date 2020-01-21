@@ -111,7 +111,8 @@ class _ProfileState extends State<Profile> {
   void getdata() async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     FirebaseUser firebaseUser = await firebaseAuth.currentUser();
-    String uids = firebaseUser.uid;
+    setState(() {
+      String uids = firebaseUser.uid;
     final DocumentReference documentReference =
         Firestore.instance.document('Users/$uids');
     documentReference.get().then((datasnapshot) {
@@ -122,6 +123,8 @@ class _ProfileState extends State<Profile> {
           print('Name = $name /t URL = $pullURL');
         });
       }
+    });
+    
     });
   }
 
@@ -215,10 +218,10 @@ class _ProfileState extends State<Profile> {
           icon: Icon(Icons.arrow_back),
           tooltip: 'back',
           onPressed: () {
-            MaterialPageRoute materialPageRoute =
-                MaterialPageRoute(builder: (BuildContext context) => Home());
-            Navigator.of(context).pushAndRemoveUntil(
-                materialPageRoute, (Route<dynamic> route) => false);
+            // MaterialPageRoute materialPageRoute =
+            //     MaterialPageRoute(builder: (BuildContext context) => Home());
+            // Navigator.of(context).pushAndRemoveUntil(
+            //     materialPageRoute, (Route<dynamic> route) => false);
           },
         ),
         // actions: <Widget>[

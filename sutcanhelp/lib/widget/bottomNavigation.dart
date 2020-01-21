@@ -19,11 +19,11 @@ class _BottomNavigationState extends State<BottomNavigation> {
         color: Colors.blue,
         backgroundColor: Colors.lightBlueAccent,
         buttonBackgroundColor: Colors.white,
-        height: 60,
+        height: 65,
         items: <Widget>[
           Icon(Icons.airline_seat_flat_angled, size: 20, color: Colors.black),
           Icon(Icons.notifications_active, size: 20, color: Colors.black),
-          Icon(Icons.home, size: 20, color: Colors.black),
+          Icon(Icons.home, size: 50, color: Colors.black),
           Icon(Icons.account_circle, size: 20, color: Colors.black),
           Icon(Icons.phone_in_talk, size: 20, color: Colors.black),
         ],
