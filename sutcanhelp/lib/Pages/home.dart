@@ -5,9 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:sutcanhelp/Pages/aaa.dart';
+import 'package:sutcanhelp/Pages/map.dart';
+import 'package:sutcanhelp/Pages/map/map.dart';
 import 'package:sutcanhelp/Pages/pageone.dart';
 import 'package:sutcanhelp/Pages/profile.dart';
-
+import 'package:sutcanhelp/Pages/sospage.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -286,25 +289,117 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Widget title() {
+    return Text(
+      "แจ้งเหตุด่วน",
+      style: TextStyle(
+        color: Colors.black,
+        fontSize: 25.0,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  // Widget bottomCircel() {
+  //   return RaisedButton(
+  //     child: Text('SOS',style: TextStyle(color:Colors.lightBlueAccent,fontSize: 40,fontWeight: FontWeight.bold),),
+  //     color: Colors.red,
+  //     splashColor: Colors.red[300],shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.circular(400)
+  //     ),
+  //     highlightElevation: 50,padding: const EdgeInsets.all(50.0),
+  //     onPressed: (){},
+  //   );
+  // }
+
+  // Widget bottomCircel() {
+  //   return FloatingActionButton(
+  //     onPressed: () {},
+  //     backgroundColor: Colors.redAccent,
+  //     foregroundColor: Colors.red,
+  //     elevation: 20.0,
+  //     child: Text("SOS",style: TextStyle(color:Colors.lightBlueAccent,fontWeight: FontWeight.bold,fontSize: 20.0),),
+
+  //   );
+  // }
+  Widget sosbuttom() {
+    return Center(
+      child: CircleAvatar(
+        radius: 120,
+        backgroundColor: Colors.red,
+        child: ClipOval(
+          child: SizedBox(width: 300.0, height: 300.0, child: bottomsos()),
+        ),
+      ),
+    );
+  }
+
+  Widget bottomsos() {
+    return Center(
+      child: InkWell(
+        onTap: () {
+          MaterialPageRoute materialPageRoute =
+              MaterialPageRoute(builder: (BuildContext context) => MapPage1());
+          Navigator.of(context).pushAndRemoveUntil(
+              materialPageRoute, (Route<dynamic> route) => true);
+
+        },
+        child: Container(
+          padding: const EdgeInsets.all(80.0),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.redAccent,
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Colors.black,
+                    //blurRadius: 0.3,
+                    blurRadius: 6.0,
+                    offset: new Offset(0.0, 4.0))
+              ]),
+          child: Text(
+            'SOS',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 40.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+ Widget page = null;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.lightBlueAccent,
-        appBar: AppBar(
-          title: Text('ssss'),
-          actions: <Widget>[
-            singoutButton(),
-          ],
-        ),
-        // drawer: showDrawer(),
-        drawerScrimColor: Colors.white30,
-        body:ListView(
-          children: <Widget>[
-            Center(
-              child: loader(),
-            )
-          ],
-        ),
-        );
+      backgroundColor: Colors.lightBlueAccent,
+      appBar: AppBar(
+        title: Text('ssss'),
+        actions: <Widget>[
+          singoutButton(),
+        ],
+      ),
+      // drawer: showDrawer(),
+      
+      drawerScrimColor: Colors.white30,
+      body: ListView(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                title(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                sosbuttom(),
+                // bottomsos(),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

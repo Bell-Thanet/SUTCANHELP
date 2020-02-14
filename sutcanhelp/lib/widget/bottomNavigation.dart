@@ -1,7 +1,11 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:sutcanhelp/Pages/aaa.dart';
 import 'package:sutcanhelp/Pages/home.dart';
+import 'package:sutcanhelp/Pages/map.dart';
+import 'package:sutcanhelp/Pages/map/map.dart';
 import 'package:sutcanhelp/Pages/profile.dart';
+
 
 class BottomNavigation extends StatefulWidget {
   @override
@@ -54,7 +58,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
               break;
             case 4:
               setState(() {
-                page = Home();
+                page = MapPage1();
               });
               break;
           }

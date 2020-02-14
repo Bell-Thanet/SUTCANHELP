@@ -25,6 +25,7 @@ class _PageoneState extends State<Pageone> {
     if (firebaseUser != null) {
       MaterialPageRoute materialPageRoute =
           MaterialPageRoute(builder: (BuildContext context) => BottomNavigation());
+          // MaterialPageRoute(builder: (BuildContext context) => Home());
       Navigator.of(context).pushAndRemoveUntil(
           materialPageRoute, (Route<dynamic> route) => false);
     }
