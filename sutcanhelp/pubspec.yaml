@@ -36,7 +36,7 @@ dependencies:
   cloud_firestore: ^0.13.0+1
   curved_navigation_bar: ^0.3.1
 
-  google_maps_flutter: ^0.5.21+17
+  google_maps_flutter: ^0.5.23+1
   geolocator: ^5.2.0
   permission_handler: ^4.2.0+hotfix.2
   fluttertoast: ^3.1.3
