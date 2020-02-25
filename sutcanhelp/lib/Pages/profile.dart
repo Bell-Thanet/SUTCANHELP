@@ -10,6 +10,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 // import 'package:path/path.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+import 'dart:ui' as ui;
+
+import 'package:sutcanhelp/widget/loading.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -25,42 +30,11 @@ class _ProfileState extends State<Profile> {
   String pullURL = '';
   FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
 
-
   @override
   void initState() {
     super.initState();
     findDisplayName();
     getdata();
-  }
-
-  Widget showLogoActor() {
-    if (_image != null) {
-      return Image.file(_image, fit: BoxFit.fill);
-    } else if (pullURL != 'null') {
-      return pullURL.isNotEmpty
-          ? Container(
-              width: 200.0,
-              height: 200.0,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: NetworkImage('$pullURL'),
-                    fit: BoxFit.fill,
-                  )),
-            )
-          : Container();
-    } else {
-      return Container(
-        width: 200.0,
-        height: 200.0,
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              image: AssetImage('images/logoActor.jpg'),
-              fit: BoxFit.fill,
-            )),
-      );
-    }
   }
 
   Widget showEmailLogin() {
@@ -77,12 +51,65 @@ class _ProfileState extends State<Profile> {
     );
   }
 
+  Widget showLogoActor() {
+    if (_image != null) {
+      return Image.file(_image, fit: BoxFit.fill);
+    } else if (pullURL != 'null') {
+      return pullURL.isNotEmpty
+          ? CachedNetworkImage(
+              imageUrl: "$pullURL",
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            )
+          //  CircleAvatar(
+          //           radius: 100,
+          //           backgroundImage: NetworkImage(pullURL),
+          //         )
+
+          // Container(
+          //     width: 200.0,
+          //     height: 200.0,
+          //     decoration: BoxDecoration(
+          //         shape: BoxShape.circle,
+          //         image: DecorationImage(
+          //           // image: NetworkImage('$pullURL'),
+          //           image: AssetImage('images/logoActor.jpg'),
+          //           fit: BoxFit.fill,
+          //         )),
+          //   )
+          : Container();
+    } else {
+      return Container(
+        width: 200.0,
+        height: 200.0,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: AssetImage('images/logoActor.png'),
+              fit: BoxFit.fill,
+            )),
+      );
+    }
+  }
+
+// CircleAvatar(
+//                     radius: _width < _height ? _width / 4 : _height / 4,
+//                     backgroundImage: NetworkImage(imgUrl),
+//                   ),
   Widget logoCircle() {
     return CircleAvatar(
-      radius: 70.0,
-      backgroundColor: Colors.blue[900],
+      radius: 100.0,
+      backgroundColor: Colors.blue[500],
       child: ClipOval(
-        child: SizedBox(width: 120.0, height: 120.0, child: showLogoActor()
+        child: SizedBox(width: 180.0, height: 180.0, child: showLogoActor()
             //     ? Image.file(_image, fit: BoxFit.fill)
             //     // ? Image.network(
             //     //     pullURL1,
@@ -99,32 +126,41 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget buttonupdatePhoto() {
-    return IconButton(
-      icon: Icon(Icons.camera),
-      onPressed: () {
-        getImage();
-      },
-      iconSize: 30.0,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(50.0),
+      child: Container(
+        color: Colors.lightBlueAccent,
+        child: IconButton(
+          icon: Icon(Icons.camera),
+          onPressed: () {
+            setImage();
+          },
+          iconSize: 50.0,
+        ),
+      ),
     );
   }
 
-  void getdata() async {
+  bool loading = false;
+
+  Future<void> getdata() async {
+    loading = true;
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     FirebaseUser firebaseUser = await firebaseAuth.currentUser();
     setState(() {
       String uids = firebaseUser.uid;
-    final DocumentReference documentReference =
-        Firestore.instance.document('Users/$uids');
-    documentReference.get().then((datasnapshot) {
-      if (datasnapshot.exists) {
-        setState(() {
-          name = datasnapshot.data['Name'];
-          pullURL = datasnapshot.data['URL'];
-          print('Name = $name /t URL = $pullURL');
-        });
-      }
-    });
-    
+      final DocumentReference documentReference =
+          Firestore.instance.document('Users/$uids');
+      documentReference.get().then((datasnapshot) {
+        if (datasnapshot.exists) {
+          setState(() {
+            name = datasnapshot.data['Name'];
+            pullURL = datasnapshot.data['URL'];
+            print('Name = $name /t URL = $pullURL');
+            loading = false;
+          });
+        }
+      });
     });
   }
 
@@ -138,12 +174,12 @@ class _ProfileState extends State<Profile> {
     return emailLogin;
   }
 
-  Future getImage() async {
+  Future setImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     print(image.lengthSync());
     File croppedFile = await ImageCropper.cropImage(
         sourcePath: image.path,
-        compressQuality: 30,
+        compressQuality: 40,
         maxHeight: 200,
         maxWidth: 200,
         cropStyle: CropStyle.circle,
@@ -208,85 +244,147 @@ class _ProfileState extends State<Profile> {
     }).catchError((e) => print(e));
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.lightBlueAccent,
-      appBar: AppBar(
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          tooltip: 'back',
-          onPressed: () {
-            // MaterialPageRoute materialPageRoute =
-            //     MaterialPageRoute(builder: (BuildContext context) => Home());
-            // Navigator.of(context).pushAndRemoveUntil(
-            //     materialPageRoute, (Route<dynamic> route) => false);
-          },
-        ),
-        // actions: <Widget>[
-        //   IconButton(
-        //     icon: Icon(Icons.ac_unit),
-        //     tooltip: 'back',
-        //     onPressed: () {
-        //       MaterialPageRoute materialPageRoute =
-        //           MaterialPageRoute(builder: (BuildContext context) => Home());
-        //       Navigator.of(context).pushAndRemoveUntil(
-        //           materialPageRoute, (Route<dynamic> route) => false);
-        //     },
-        //   ),
-        // ],
+  Widget editdataButton(BuildContext context) {
+    return Material(
+      borderRadius: BorderRadius.circular(30.0),
+      // shadowColor: Colors.black54,
+      // elevation: 5.0,
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width,
+        height: 56.0,
+        onPressed: () {
+          uploadPhoto(context);
+        },
+        child: Text('แก้ไขข้อมูล',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 25.0,
+                fontWeight: FontWeight.bold)),
       ),
-      body: Builder(
-        builder: (context) => Container(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(
-              height: 20.0,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                logoCircle(),
-                Padding(
-                  padding: const EdgeInsets.only(top: 90.0),
-                  child: buttonupdatePhoto(),
-                )
-              ],
-            ),
-            SizedBox(height: 20.0),
-            showEmailLogin(),
-            showNameLogin(),
-            RaisedButton(onPressed: () {
-              uploadPhoto(context);
-            }),
-          ],
-        )),
-      ),
-      // bottomNavigationBar: BottomNavigationProfile()
+      color: Colors.lightBlueAccent,
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    var divheight = MediaQuery.of(context).size.height;
+    var divwidth = MediaQuery.of(context).size.width;
+    return loading
+        ? Loading()
+        : Scaffold(
+            backgroundColor: Colors.lightBlueAccent,
+            appBar: AppBar(
+              title: Center(
+                child: Text(
+                  'Profile',
+                  style: TextStyle(fontSize: 25),
+                ),
+              ),
+              // centerTitle: true,
+              // leading: IconButton(
+              //   icon: Icon(Icons.arrow_back),
+              //   tooltip: 'back',
+              //   onPressed: () {
+              //     // MaterialPageRoute materialPageRoute =
+              //     //     MaterialPageRoute(builder: (BuildContext context) => Home());
+              //     // Navigator.of(context).pushAndRemoveUntil(
+              //     //     materialPageRoute, (Route<dynamic> route) => false);
+              //   },
+              // ),
+
+              // actions: <Widget>[
+              //   IconButton(
+              //     icon: Icon(Icons.ac_unit),
+              //     tooltip: 'back',
+              //     onPressed: () {
+              //       MaterialPageRoute materialPageRoute =
+              //           MaterialPageRoute(builder: (BuildContext context) => Home());
+              //       Navigator.of(context).pushAndRemoveUntil(
+              //           materialPageRoute, (Route<dynamic> route) => false);
+              //     },
+              //   ),
+              // ],
+            ),
+            body: Builder(
+              builder: (context) => Container(
+                  child: Column(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 50),
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Stack(
+                        children: <Widget>[
+                          logoCircle(),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 130, top: 130),
+                            child: buttonupdatePhoto(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Divider(height: 30, color: Colors.black87),
+                  Stack(
+                    children: <Widget>[
+                      Center(
+                        child: Container(
+                          height: 150,
+                          width: divwidth / 1.3,
+                          decoration: BoxDecoration(
+                            color: Colors.blue[300],
+                            borderRadius: BorderRadius.circular(20.0),
+                            border: Border.all(
+                              color: Colors.blue,
+                              style: BorderStyle.solid,
+                            ),
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              showNameLogin(),
+                              SizedBox(height: 15),
+                              showEmailLogin(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                          padding:
+                              EdgeInsets.only(top: 120, left: 40, right: 40),
+                          child: editdataButton(context))
+                    ],
+                  ),
+                  // Container(
+                  //   child: Stack(
+                  //     children: <Widget>[
+                  //       // showEmailLogin(),
+
+                  //       Padding(
+                  //         padding: EdgeInsets.only(top: 140),
+                  //         child: Container(child: editdataButton(context)),
+                  //       ),
+                  //       // RaisedButton(onPressed: () {
+                  //       //   uploadPhoto(context);
+                  //       // }),
+                  //     ],
+                  //   ),
+                  // ),
+
+                  // Stack(
+                  //   children: <Widget>[
+                  //     showEmailLogin(),
+                  //     showNameLogin(),
+                  //     RaisedButton(onPressed: () {
+                  //       uploadPhoto(context);
+                  //     }),
+                  //   ],
+                  // ),
+                ],
+              )),
+            ),
+            // bottomNavigationBar: BottomNavigationProfile()
+          );
+  }
 }
-
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.lightBlueAccent,
-//       appBar: AppBar(
-//           // title: Text('ssss'),
-//           ),
-//       body: ListView(
-
-//         children: <Widget>[
-//           Column(
-//             children: <Widget>[
-//               showLogoActor(),
-//               showNameLogin(),
-//               showEmailLogin(),
-//             ],
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }

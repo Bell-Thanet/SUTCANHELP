@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -197,6 +198,7 @@ class _MapPage1State extends State<MapPage1> {
         onPressed: () {
           if (selectedsos != null) {
             formKey.currentState.save();
+            // uploadPhoto(context);
             database();
           } else {
             print("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
@@ -225,6 +227,8 @@ class _MapPage1State extends State<MapPage1> {
         // Firestore.instance.collection('Users').document(userid);
         Firestore.instance.collection('SOS').document();
     print(documentReference.documentID);
+    String documentID = documentReference.documentID;
+    uploadPhoto(context, documentID);
     Map<String, String> data = <String, String>{
       "User": userid,
       "Position": posi1,
@@ -318,6 +322,7 @@ class _MapPage1State extends State<MapPage1> {
 
   File _image1;
   File _image2;
+  File _image3;
   int index = 0;
 
   Future getImage() async {
@@ -346,15 +351,58 @@ class _MapPage1State extends State<MapPage1> {
           minimumAspectRatio: 1.0,
         ));
     setState(() {
-      index += 1;
+      // if (_image1 != null) {
+      //   index = 2;
+      // } else if (_image1 == null) {
+      //   index = 1;
+      // } else if (_image2 == null) {
+      //   index = 2;
+      // } else if (_image2 != null) {
+      //   index = 3;
+      // } else if (_image3 == null) {
+      //   index = 3;
+      // }
+
+      // if (_image1 != null) {
+      //   index = 2;
+      // } else if (_image1 == null) {
+      //   index = 1;
+      // }
+      // if (_image2 == null) {
+      //   index = 2;
+      // } else if (_image2 != null) {
+      //   index = 3;
+      // }
+
+      // if (_image1 != null || _image2 != null)
+      //   index += 1;
+      // else
+      //   index = 1;
+
+      if (_image1 == null) {
+        index = 1;
+      }
+      if (_image2 == null && _image1 != null) {
+        index = 2;
+      }
+      if (_image3 == null && _image1 != null && _image2 != null) {
+        index = 3;
+      }
       switch (index) {
         case 1:
           _image1 = croppedFile;
           print("Impge1 Patn $_image1");
+          print("getImage1 $index");
           break;
         case 2:
           _image2 = croppedFile;
           print("Impge2 Patn $_image2");
+          print("getImage2 $index");
+          break;
+        case 3:
+          _image3 = croppedFile;
+          print("Impge3 Patn $_image3");
+          print("getImage3 $index");
           break;
       }
       // _image = croppedFile;
@@ -370,20 +418,104 @@ class _MapPage1State extends State<MapPage1> {
   //   }
   // }
 
+  // Widget showPhoto1() {
+  //   if (_image1 != null && (index == 1 || index == 2)) {
+  //     return Padding(
+  //         padding: const EdgeInsets.only(right: 5),
+  //         child: Stack(
+  //           children: <Widget>[
+  //             Container(
+  //               child: ClipRRect(
+  //                 borderRadius: BorderRadius.circular(20.0),
+  //                 child: Image.file(
+  //                   _image1,
+  //                   width: 110,
+  //                   height: 110,
+  //                 ),
+  //               ),
+  //             ),
+  //             Padding(
+  //               padding: const EdgeInsets.only(left: 70, bottom: 10),
+  //               child: Container(
+  //                 child: IconButton(
+  //                   icon: Icon(Icons.cancel),
+  //                   onPressed: () {
+  //                     setState(() {
+  //                       _image1 = null;
+  //                       index -= 1;
+  //                       print("showPhoto1 $index");
+  //                     });
+  //                   },
+  //                   iconSize: 30.0,
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ));
+  //   } else {
+  //     return Padding(
+  //       padding: const EdgeInsets.only(right: 5),
+  //       child: ClipRRect(
+  //         borderRadius: BorderRadius.circular(20.0),
+  //         child: Container(
+  //           // color: Colors.green,
+  //           height: 110,
+  //           width: 110,
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
+
+  // Widget showPhoto2() {
+  //   if (_image2 != null && (index == 2 || index == 0 || index == 1)) {
+  //     return Padding(
+  //         padding: const EdgeInsets.only(right: 5),
+  //         child: Stack(
+  //           children: <Widget>[
+  //             ClipRRect(
+  //               borderRadius: BorderRadius.circular(20.0),
+  //               child: Image.file(
+  //                 _image2,
+  //                 width: 110,
+  //                 height: 110,
+  //               ),
+  //             ),
+  //             Padding(
+  //               padding: const EdgeInsets.only(left: 70, bottom: 10),
+  //               child: Container(
+  //                 child: IconButton(
+  //                   icon: Icon(Icons.cancel),
+  //                   onPressed: () {
+  //                     setState(() {
+  //                       _image2 = null;
+  //                       index = 1;
+  //                       print("showPhoto2 $index");
+  //                     });
+  //                   },
+  //                   iconSize: 30.0,
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ));
+  //   } else {
+  //     return Padding(
+  //       padding: const EdgeInsets.only(right: 5),
+  //       child: ClipRRect(
+  //         borderRadius: BorderRadius.circular(20.0),
+  //         child: Container(
+  //           // color: Colors.green,
+  //           height: 110,
+  //           width: 110,
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
+
   Widget showPhoto1() {
-    if (_image1 != null && (index == 1 || index == 2)) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 5),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20.0),
-          child: Image.file(
-            _image1,
-            width: 110,
-            height: 110,
-          ),
-        ),
-      );
-    } else {
+    if (_image1 == null) {
       return Padding(
         padding: const EdgeInsets.only(right: 5),
         child: ClipRRect(
@@ -395,23 +527,44 @@ class _MapPage1State extends State<MapPage1> {
           ),
         ),
       );
+    } else {
+      return Padding(
+          padding: const EdgeInsets.only(right: 5),
+          child: Stack(
+            children: <Widget>[
+              Container(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: Image.file(
+                    _image1,
+                    width: 110,
+                    height: 110,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 70, bottom: 10),
+                child: Container(
+                  child: IconButton(
+                    icon: Icon(Icons.cancel,color: Colors.white70,),
+                    onPressed: () {
+                      setState(() {
+                        _image1 = null;
+                        index -= 1;
+                        print("showPhoto1 $index");
+                      });
+                    },
+                    iconSize: 30.0,
+                  ),
+                ),
+              ),
+            ],
+          ));
     }
   }
 
   Widget showPhoto2() {
-    if (_image2 != null && index == 2) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 5),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20.0),
-          child: Image.file(
-            _image2,
-            width: 110,
-            height: 110,
-          ),
-        ),
-      );
-    } else {
+    if (_image2 == null) {
       return Padding(
         padding: const EdgeInsets.only(right: 5),
         child: ClipRRect(
@@ -423,7 +576,156 @@ class _MapPage1State extends State<MapPage1> {
           ),
         ),
       );
+    } else {
+      return Padding(
+          padding: const EdgeInsets.only(right: 5),
+          child: Stack(
+            children: <Widget>[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: Image.file(
+                  _image2,
+                  width: 110,
+                  height: 110,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 70, bottom: 10),
+                child: Container(
+                  child: IconButton(
+                    icon: Icon(Icons.cancel,color: Colors.white70,),
+                    onPressed: () {
+                      setState(() {
+                        _image2 = null;
+                        index = 1;
+                        print("showPhoto2 $index");
+                      });
+                    },
+                    iconSize: 30.0,
+                  ),
+                ),
+              ),
+            ],
+          ));
     }
+  }
+
+  Widget showPhoto3() {
+    if (_image3 == null) {
+      return Padding(
+        padding: const EdgeInsets.only(right: 5),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.0),
+          child: Container(
+            // color: Colors.green,
+            height: 110,
+            width: 110,
+          ),
+        ),
+      );
+    } else {
+      return Padding(
+          padding: const EdgeInsets.only(right: 5),
+          child: Stack(
+            children: <Widget>[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: Image.file(
+                  _image3,
+                  width: 110,
+                  height: 110,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 70, bottom: 10),
+                child: Container(
+                  child: IconButton(
+                    icon: Icon(Icons.cancel,color: Colors.white70,),
+                    onPressed: () {
+                      setState(() {
+                        _image3 = null;
+                        index = 2;
+                        print("showPhoto2 $index");
+                      });
+                    },
+                    iconSize: 30.0,
+                  ),
+                ),
+              ),
+            ],
+          ));
+    }
+  }
+
+  var url1;
+  var url2;
+  var url3;
+  Future<void> uploadPhoto(BuildContext context, String documentIDSOS) async {
+    // String filName = basename(_image.path);
+    print("uploadPhoto index = $index");
+    for (int i = 1; i <= 3; i++) {
+      StorageReference firebaseStorageRef = FirebaseStorage.instance
+          .ref()
+          .child('SOS')
+          .child(documentIDSOS + "_" + i.toString());
+      if (i == 1 && _image1 != null) {
+        print(_image1.lengthSync());
+        StorageUploadTask storageUploadTask =
+            firebaseStorageRef.putFile(_image1);
+        var downUrl1 =
+            await (await storageUploadTask.onComplete).ref.getDownloadURL();
+
+        url1 = downUrl1.toString();
+        print("Download URL1 $url1");
+      } else if (i == 2 && _image2 != null) {
+        print(_image2.lengthSync());
+        StorageUploadTask storageUploadTask =
+            firebaseStorageRef.putFile(_image2);
+        var downUrl2 =
+            await (await storageUploadTask.onComplete).ref.getDownloadURL();
+
+        url2 = downUrl2.toString();
+        print("Download URL2 $url2");
+      } else if (i == 3 && _image3 != null) {
+        print(_image3.lengthSync());
+        StorageUploadTask storageUploadTask =
+            firebaseStorageRef.putFile(_image3);
+        var downUrl3 =
+            await (await storageUploadTask.onComplete).ref.getDownloadURL();
+
+        url3 = downUrl3.toString();
+        print("Download URL3 $url3");
+        print('\n');
+      }
+    }
+    setURLImageToSOS(url1, url2, url3, documentIDSOS);
+    setState(() {
+      // Scaffold.of(context).showSnackBar(SnackBar(
+      //   content: Text("Profile Picture Update"),
+      // ));
+    });
+  }
+
+  Future<void> setURLImageToSOS(
+      String url1, String url2, String url3, String documentIDSOS) async {
+    final DocumentReference documentReference =
+        Firestore.instance.document('SOS/$documentIDSOS');
+    // Firestore.instance.document('Users');
+    Map<String, String> data = <String, String>{
+      "ImageSOS_1": url1,
+      "ImageSOS_2": url2,
+      "ImageSOS_3": url3
+    };
+    documentReference.updateData(data).whenComplete(() {
+      setState(() {
+        print(
+            'documentIDSOS $documentIDSOS \t Update URL1 image To $url1 and Sucess');
+        print(
+            'documentIDSOS $documentIDSOS \t Update URL2 image To $url2 and Sucess');
+        print(
+            'documentIDSOS $documentIDSOS \t Update URL3 image To $url3 and Sucess');
+      });
+    }).catchError((e) => print(e));
   }
 
   @override
@@ -451,65 +753,6 @@ class _MapPage1State extends State<MapPage1> {
               )
             ],
           ),
-          // Expanded(
-          //     child: ListView(
-          //   children: <Widget>[
-          //     Container(
-          //       // margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
-          //       child: Form(
-          //         key: formKey,
-          //         child: Column(
-          //           children: <Widget>[
-          //             Row(
-
-          //               children: <Widget>[
-          //                 buttonupdatePhoto(),
-          //                 Container(
-          //                   width: 330.0,
-          //                   height: 150,
-          //                   color: Colors.blue,
-          //                   child: Row(
-          //                     children: <Widget>[
-          //                       Expanded(
-          //                         child: ListView(
-          //                           scrollDirection: Axis.horizontal,
-          //                           children: <Widget>[
-          //                             showPhoto1(), showPhoto2(),showPhoto1(), showPhoto2()
-          //                           ],
-          //                         ),
-          //                       )
-          //                       // Text('Photo')
-          //                     ],
-          //                   ),
-          //                   // child: Row(
-          //                   //   children: <Widget>[showPhoto1(), showPhoto2()],
-          //                   // ),
-          //                 )
-          //               ],
-          //             ),
-          //             Container(
-          //               margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
-          //               child: Column(
-          //                 children: <Widget>[
-          //                   SizedBox(
-          //                     height: 15.0,
-          //                   ),
-          //                   dropdoweBox(),
-          //                   SizedBox(
-          //                     height: 15.0,
-          //                   ),
-          //                   detailText(),
-          //                   SizedBox(height: 30),
-          //                   addMapTodatabase(),
-          //                 ],
-          //               ),
-          //             )
-          //           ],
-          //         ),
-          //       ),
-          //     )
-          //   ],
-          // ))
           Expanded(
               child: ListView(
             children: <Widget>[
@@ -540,8 +783,7 @@ class _MapPage1State extends State<MapPage1> {
                                       children: <Widget>[
                                         showPhoto1(),
                                         showPhoto2(),
-                                        showPhoto1(),
-                                        showPhoto2()
+                                        showPhoto3(),
                                       ],
                                     ),
                                   )

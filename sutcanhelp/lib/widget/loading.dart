@@ -11,12 +11,14 @@ class _LoadingState extends State<Loading> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent,
-      body: Center(
-        child: SpinKitChasingDots(
-          color: Colors.white,
-          size: 50.0,
-        ),
-      ),
+      body: Center(child: CircularProgressIndicator()),
+      
+      // Center(
+      //   child: SpinKitChasingDots(
+      //     color: Colors.white,
+      //     size: 50.0,
+      //   ),
+      // ),
     );
   }
 }

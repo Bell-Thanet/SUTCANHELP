@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:sutcanhelp/Pages/aaa.dart';
 import 'package:sutcanhelp/Pages/map.dart';
 import 'package:sutcanhelp/Pages/map/map.dart';
@@ -28,8 +29,8 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    findDisplayName();
-    getdata();
+    // findDisplayName();
+    // getdata();
     // showDrawer();
     // showHeader();
   }
@@ -77,13 +78,13 @@ class _HomeState extends State<Home> {
       icon: Icon(Icons.exit_to_app),
       tooltip: 'Sing out',
       onPressed: () {
-        loader1();
+        // loader1();
         setState(() {
           loaded = false;
         });
-        Timer(Duration(seconds: 5), () {
-          Navigator.of(context).pop();
-        });
+        // Timer(Duration(seconds: 5), () {
+        //   Navigator.of(context).pop();
+        // });
         // loader1();
         myAlert();
       },
@@ -91,34 +92,31 @@ class _HomeState extends State<Home> {
   }
 
   void myAlert() {
-    showDialog(
+    Alert(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Are You Sure ?'),
-            content: Text('Do You Want Sing Out ?'),
-            actions: <Widget>[cancleButton(), okButton()],
-          );
-        });
-  }
-
-  Widget cancleButton() {
-    return FlatButton(
-      child: Text('Cancle'),
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-    );
-  }
-
-  Widget okButton() {
-    return FlatButton(
-      child: Text('OK'),
-      onPressed: () {
-        Navigator.of(context).pop();
-        procrssSignOut();
-      },
-    );
+        title: 'Are You Sure ?',
+        content: Text('Do You Want Sing Out ?'),
+        buttons: [
+          DialogButton(
+            child: Text(
+              'OK',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              procrssSignOut();
+            },
+          ),
+          DialogButton(
+            child: Text(
+              'Cancle',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )
+        ]).show();
   }
 
   Future<void> procrssSignOut() async {
@@ -342,7 +340,6 @@ class _HomeState extends State<Home> {
               MaterialPageRoute(builder: (BuildContext context) => MapPage1());
           Navigator.of(context).pushAndRemoveUntil(
               materialPageRoute, (Route<dynamic> route) => true);
-
         },
         child: Container(
           padding: const EdgeInsets.all(80.0),
@@ -368,38 +365,75 @@ class _HomeState extends State<Home> {
       ),
     );
   }
- Widget page = null;
+  // Widget bottomsos() {
+  //   return ClipRRect(
+  //     child: Stack(
+  //       children: <Widget>[],
+  //     ),
+  //   );
+  // }
+
+  Widget page = null;
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     backgroundColor: Colors.lightBlueAccent,
+  //     appBar: AppBar(
+  //       title: Text('HOME'),
+  //       actions: <Widget>[
+  //         singoutButton(),
+  //       ],
+  //     ),
+  //     // drawer: showDrawer(),
+
+  //     drawerScrimColor: Colors.white30,
+  //     body: ListView(
+  //       children: <Widget>[
+  //         Padding(
+  //           padding: const EdgeInsets.all(40),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: <Widget>[
+  //               // title(),
+  //               // SizedBox(
+  //               //   height: 20.0,
+  //               // ),
+  //               sosbuttom(),
+  //               // bottomsos(),
+  //             ],
+  //           ),
+  //         )
+  //       ],
+  //     ),
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent,
       appBar: AppBar(
-        title: Text('ssss'),
+        title: Center(
+          child: Text(
+            'SOS',
+            style: TextStyle(fontSize: 25),
+          ),
+        ),
         actions: <Widget>[
           singoutButton(),
         ],
       ),
       // drawer: showDrawer(),
-      
+
       drawerScrimColor: Colors.white30,
-      body: ListView(
+      body: Container(
+          // width: MediaQuery.of(context).size.width,
+          // height: MediaQuery.of(context).size.height,
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                title(),
-                SizedBox(
-                  height: 20.0,
-                ),
-                sosbuttom(),
-                // bottomsos(),
-              ],
-            ),
-          )
+          Container(child: sosbuttom()),
         ],
-      ),
+      )),
     );
   }
 }

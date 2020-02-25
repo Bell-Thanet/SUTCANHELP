@@ -5,9 +5,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:sutcanhelp/Pages/home.dart';
 import 'package:sutcanhelp/Pages/pageone.dart';
 // import 'package:sutcanhelp/Pages/signIn.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sutcanhelp/widget/bottomNavigation.dart';
+import 'package:sutcanhelp/widget/loading.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -18,7 +21,47 @@ class _RegisterPageState extends State<RegisterPage> {
   //สร้าง Form เผื่อเอาไว้เก็บตัวแปร
   final formKey = GlobalKey<FormState>();
   String emailString, passString, nameString, repassString;
-  bool loaded = true;
+  bool loading = false;
+
+  // Widget registerButton() {
+  //   return Material(
+  //     borderRadius: BorderRadius.circular(30.0),
+  //     shadowColor: Colors.black54,
+  //     elevation: 5.0,
+  //     child: MaterialButton(
+  //       minWidth: MediaQuery.of(context).size.width,
+  //       height: 56.0,
+  //       onPressed: () {
+  //         print('สมัคร');
+  //         if (formKey.currentState.validate()) {
+  //           formKey.currentState.save();
+  //           print(
+  //               'Username = $emailString, password = $passString, name = $nameString');
+  //           print('Password = $passString, Repassword = $repassString');
+  //           if (passString == repassString) {
+  //             registerThread();
+  //           } else {
+  //             setState(() {
+  //               loader();
+  //               loaded = false;
+  //             });
+  //             Timer(Duration(seconds: 2), () {
+  //               Navigator.of(context).pop();
+  //               passAlert();
+  //             });
+  //           }
+  //         }
+  //       },
+  //       child: Text('สมัครสมาชิก',
+  //           textAlign: TextAlign.center,
+  //           style: TextStyle(
+  //               color: Colors.white,
+  //               fontSize: 25.0,
+  //               fontWeight: FontWeight.bold)),
+  //     ),
+  //     color: Colors.greenAccent[700],
+  //   );
+  // }
 
   Widget registerButton() {
     return Material(
@@ -29,6 +72,10 @@ class _RegisterPageState extends State<RegisterPage> {
         minWidth: MediaQuery.of(context).size.width,
         height: 56.0,
         onPressed: () {
+          setState(() {
+            loading = true;
+          });
+
           print('สมัคร');
           if (formKey.currentState.validate()) {
             formKey.currentState.save();
@@ -38,16 +85,14 @@ class _RegisterPageState extends State<RegisterPage> {
             if (passString == repassString) {
               registerThread();
             } else {
-              setState(() {
-                loader();
-                loaded = false;
-              });
-              Timer(Duration(seconds: 2), () {
-                Navigator.of(context).pop();
-                passAlert();
-              });
+              passAlert();
             }
           }
+          
+
+          setState(() {
+            loading = false;
+          });
         },
         child: Text('สมัครสมาชิก',
             textAlign: TextAlign.center,
@@ -298,6 +343,10 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             onPressed: () {
               Navigator.pop(context);
+              MaterialPageRoute materialPageRoute = MaterialPageRoute(
+                  builder: (BuildContext context) => BottomNavigation());
+              Navigator.of(context).pushAndRemoveUntil(
+                  materialPageRoute, (Route<dynamic> route) => false);
             },
           ),
         ]).show();
@@ -310,6 +359,38 @@ class _RegisterPageState extends State<RegisterPage> {
 //     userUid = user.uid.toString();
 //     return userUid;
 //   }
+  // Future<void> registerThread() async {
+  //   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  //   await firebaseAuth
+  //       .createUserWithEmailAndPassword(
+  //           email: emailString, password: passString)
+  //       .then((currentUser) {
+  //     // inputData();
+  //     loader();
+  //     setState(() {
+  //       loaded = false;
+  //     });
+  //     Timer(Duration(seconds: 2), () {
+  //       Navigator.of(context).pop();
+  //       setupUser();
+  //     });
+
+  //     print('Register Success for Email = $emailString');
+  //   }).catchError((response) {
+  //     String title = response.code;
+  //     String message = response.message;
+  //     print('title = $title, message = $message');
+
+  //     setState(() {
+  //       loader();
+  //       loaded = false;
+  //     });
+  //     Timer(Duration(seconds: 2), () {
+  //       Navigator.of(context).pop();
+  //       myAlert(title, message);
+  //     });
+  //   });
+  // }
   Future<void> registerThread() async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     await firebaseAuth
@@ -317,29 +398,30 @@ class _RegisterPageState extends State<RegisterPage> {
             email: emailString, password: passString)
         .then((currentUser) {
       // inputData();
-      loader();
-      setState(() {
-        loaded = false;
-      });
-      Timer(Duration(seconds: 2), () {
-        Navigator.of(context).pop();
-        setupUser();
-      });
-
+      // loader();
+      // setState(() {
+      //   loaded = false;
+      // });
+      // Timer(Duration(seconds: 2), () {
+      //   Navigator.of(context).pop();
+      //   setupUser();
+      // });
+      setupUser();
       print('Register Success for Email = $emailString');
     }).catchError((response) {
       String title = response.code;
       String message = response.message;
       print('title = $title, message = $message');
 
-      setState(() {
-        loader();
-        loaded = false;
-      });
-      Timer(Duration(seconds: 2), () {
-        Navigator.of(context).pop();
-        myAlert(title, message);
-      });
+      // setState(() {
+      //   loader();
+      //   loaded = false;
+      // });
+      // Timer(Duration(seconds: 2), () {
+      //   Navigator.of(context).pop();
+      //   myAlert(title, message);
+      // });
+      myAlert(title, message);
     });
   }
 
@@ -368,49 +450,51 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Register'),
-      //   actions: <Widget>[],
-      // ),
+    return loading
+        ? Loading()
+        : Scaffold(
+            // appBar: AppBar(
+            //   title: Text('Register'),
+            //   actions: <Widget>[],
+            // ),
 
-      backgroundColor: Colors.lightBlueAccent,
-      body: Container(
-        margin: MediaQuery.of(context).padding,
-        child: Form(
-          key: formKey,
-          child: ListView(
-            padding: EdgeInsets.all(30.0),
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  topText(),
-                  SizedBox(height: 30.0),
-                  emailText(),
-                  SizedBox(height: 15.0),
-                  passwordText(),
-                  SizedBox(height: 15.0),
-                  repasswordText(),
-                  SizedBox(height: 15.0),
-                  nameText(),
-                  SizedBox(height: 30.0),
-                  registerButton(),
-                  SizedBox(height: 15.0),
-                  cancelButton(),
-                  // Padding(
-                  //   padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: <Widget>[, ],
-                  //   ),
-                  // ),
-                  // )
-                ],
+            backgroundColor: Colors.lightBlueAccent,
+            body: Container(
+              margin: MediaQuery.of(context).padding,
+              child: Form(
+                key: formKey,
+                child: ListView(
+                  padding: EdgeInsets.all(30.0),
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        topText(),
+                        SizedBox(height: 30.0),
+                        emailText(),
+                        SizedBox(height: 15.0),
+                        passwordText(),
+                        SizedBox(height: 15.0),
+                        repasswordText(),
+                        SizedBox(height: 15.0),
+                        nameText(),
+                        SizedBox(height: 30.0),
+                        registerButton(),
+                        SizedBox(height: 15.0),
+                        cancelButton(),
+                        // Padding(
+                        //   padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: <Widget>[, ],
+                        //   ),
+                        // ),
+                        // )
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 }
