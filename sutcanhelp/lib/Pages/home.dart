@@ -6,12 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:sutcanhelp/Pages/aaa.dart';
-import 'package:sutcanhelp/Pages/map.dart';
 import 'package:sutcanhelp/Pages/map/map.dart';
 import 'package:sutcanhelp/Pages/pageone.dart';
 import 'package:sutcanhelp/Pages/profile.dart';
-import 'package:sutcanhelp/Pages/sospage.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -128,31 +125,31 @@ class _HomeState extends State<Home> {
     });
   }
 
-  // Widget showDrawer() {
-  //   return Drawer(
-  //     child: ListView(
-  //       children: <Widget>[
-  //         showHeader(),
-  //         profileList(),
-  //         logoutList(),
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget showDrawer() {
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          showHeader(),
+          profileList(),
+          logoutList(),
+        ],
+      ),
+    );
+  }
 
-  // Widget showHeader() {
-  //   return DrawerHeader(
-  //     child: Column(
-  //       children: <Widget>[
-  //         logoCircle(),
-  //         SizedBox(height: 15.0),
-  //         showNameLogin(),
-  //         showEmailLogin(),
-  //       ],
-  //     ),
-  //     decoration: BoxDecoration(color: Colors.blue.shade700),
-  //   );
-  // }
+  Widget showHeader() {
+    return DrawerHeader(
+      child: Column(
+        children: <Widget>[
+          logoCircle(),
+          SizedBox(height: 15.0),
+          showNameLogin(),
+          showEmailLogin(),
+        ],
+      ),
+      decoration: BoxDecoration(color: Colors.blue.shade700),
+    );
+  }
 
   // Widget showLogoActornull() {
   //   return Container(

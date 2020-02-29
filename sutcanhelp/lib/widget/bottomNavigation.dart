@@ -1,11 +1,10 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:sutcanhelp/Pages/aaa.dart';
+import 'package:sutcanhelp/Pages/firstAid.dart';
 import 'package:sutcanhelp/Pages/home.dart';
-import 'package:sutcanhelp/Pages/map.dart';
 import 'package:sutcanhelp/Pages/map/map.dart';
 import 'package:sutcanhelp/Pages/profile.dart';
-
+import 'package:sutcanhelp/Pages/telephone.dart';
 
 class BottomNavigation extends StatefulWidget {
   @override
@@ -15,9 +14,48 @@ class BottomNavigation extends StatefulWidget {
 class _BottomNavigationState extends State<BottomNavigation> {
   Widget page = Home();
 
+  Widget logoutList() {
+    return ListTile(
+      leading: Icon(Icons.arrow_back),
+      title: Text(
+        'Logout',
+        style: TextStyle(
+          fontSize: 18.0,
+        ),
+      ),
+      onTap: () {
+        // loader1();
+        // setState(() {
+        //   loaded = false;
+        // });
+        // Timer(Duration(seconds: 5), () {
+        //   Navigator.of(context).pop();
+        // });
+        // // loader1();
+        // myAlert();
+        setState(() {
+          page=Profile();
+        });
+      },
+    );
+  }
+
+  Widget showDrawer() {
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          // showHeader(),
+          // profileList(),
+          logoutList(),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: showDrawer(),
       body: page,
       bottomNavigationBar: CurvedNavigationBar(
         color: Colors.blue,
@@ -38,7 +76,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
           switch (index) {
             case 0:
               setState(() {
-                page = Home();
+                page = FirstAid();
               });
               break;
             case 1:
@@ -58,7 +96,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
               break;
             case 4:
               setState(() {
-                page = MapPage1();
+                page = Telephone();
               });
               break;
           }

@@ -9,7 +9,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'dart:async';
+import 'package:sutcanhelp/widget/multiSelectChip.dart';
 
 void main() {
   runApp(new MaterialApp(
@@ -34,6 +36,7 @@ class _MapPage1State extends State<MapPage1> {
     // getCurrentLocation();
     _goToMe();
     myLocationButton();
+    getdata();
   }
 
   LocationData currentLocation;
@@ -232,13 +235,14 @@ class _MapPage1State extends State<MapPage1> {
     Map<String, String> data = <String, String>{
       "User": userid,
       "Position": posi1,
-      "อาการ": selectedsos,
+      "ระดับอาการ": selectedsos,
       "Detail": detail,
+      "อาการ": selectedSOSList.join(","),
     };
 
     documentReference.setData(data).whenComplete(() {
       print(
-          "User: $userid /t Position: $posi1 /t อาการ $selectedsos /t Detail $detail");
+          "User: $userid \t Position: $posi1 \t ระดับอาการ $selectedsos \t Detail $detail \t อาการ $selectedSOSList");
 
       // print(
       //     "Email: $emailString /t Password: $passString /t Name: $nameString /t URL: null ");
@@ -546,7 +550,10 @@ class _MapPage1State extends State<MapPage1> {
                 padding: const EdgeInsets.only(left: 70, bottom: 10),
                 child: Container(
                   child: IconButton(
-                    icon: Icon(Icons.cancel,color: Colors.white70,),
+                    icon: Icon(
+                      Icons.cancel,
+                      color: Colors.white70,
+                    ),
                     onPressed: () {
                       setState(() {
                         _image1 = null;
@@ -593,7 +600,10 @@ class _MapPage1State extends State<MapPage1> {
                 padding: const EdgeInsets.only(left: 70, bottom: 10),
                 child: Container(
                   child: IconButton(
-                    icon: Icon(Icons.cancel,color: Colors.white70,),
+                    icon: Icon(
+                      Icons.cancel,
+                      color: Colors.white70,
+                    ),
                     onPressed: () {
                       setState(() {
                         _image2 = null;
@@ -640,7 +650,10 @@ class _MapPage1State extends State<MapPage1> {
                 padding: const EdgeInsets.only(left: 70, bottom: 10),
                 child: Container(
                   child: IconButton(
-                    icon: Icon(Icons.cancel,color: Colors.white70,),
+                    icon: Icon(
+                      Icons.cancel,
+                      color: Colors.white70,
+                    ),
                     onPressed: () {
                       setState(() {
                         _image3 = null;
@@ -728,6 +741,166 @@ class _MapPage1State extends State<MapPage1> {
     }).catchError((e) => print(e));
   }
 
+  List<String> reportList = [/*Data Hascode*/];
+  List<String> selectedSOSList = List();
+
+  Future<void> getdata() async {
+    setState(() {
+      final DocumentReference documentReference =
+          Firestore.instance.document('SosList/soslist');
+      documentReference.get().then((datasnapshot) {
+        if (datasnapshot.exists) {
+          setState(() {
+            for (var v in datasnapshot.data.keys) {
+              // print('$v');
+              reportList.add(datasnapshot.data['$v'].toString());
+            }
+          });
+        }
+      });
+    });
+  }
+
+  _showSosListDialog() {
+    // showDialog(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       //Here we will build the content of the dialog
+    //       return AlertDialog(
+    //         title: Text("Report Video"),
+    //         content: MultiSelectChip(
+    //           reportList,
+    //           onSelectionChanged: (selectedList) {
+    //             setState(() {
+    //               selectedSOSList = selectedList;
+    //             });
+    //           },
+    //         ),
+    //         actions: <Widget>[
+    //           FlatButton(
+    //             child: Text("Report"),
+    //             onPressed: () => Navigator.of(context).pop(),
+    //           )
+    //         ],
+    //       );
+    //     });
+    return Alert(
+        context: context,
+        title: 'ลักษณะการบาดเจ็บ',
+        content: MultiSelectChip(
+          reportList,
+          onSelectionChanged: (selectedList) {
+            setState(() {
+              selectedSOSList = selectedList;
+            });
+          },
+        ),
+        buttons: [
+          DialogButton(
+            color: Colors.lime,
+            child: Text(
+              'OK',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          DialogButton(
+            color: Colors.redAccent,
+            child: Text(
+              'Cancle',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )
+        ]).show();
+  }
+
+  bottomDetailList() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        ClipRRect(
+            borderRadius: BorderRadius.circular(20.0),
+            child: selectedSOSList.length != 0
+                ? Container(
+                    color: Colors.black12,
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    height: 70,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            child: ListView(
+                              children: <Widget>[
+                                Center(
+                                  child: Text(
+                                    selectedSOSList.join(" , "),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                selectedSOSList = [];
+                              });
+                            },
+                            icon: Icon(Icons.cancel),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : Container(
+                    color: Colors.black12,
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    height: 70,
+                    child: Center(
+                        child: Text(
+                      "ลักษณะการบาดเจ็บ",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold),
+                    )),
+                  )),
+        Material(
+          borderRadius: BorderRadius.circular(20.0),
+          shadowColor: Colors.black54,
+          elevation: 5.0,
+          child: MaterialButton(
+            minWidth: 70.0,
+            // minWidth: MediaQuery.of(context).size.width,
+            height: 50.0,
+            onPressed: () {
+              _showSosListDialog();
+            },
+            child: Text('AA',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold)),
+          ),
+          color: Colors.green[700],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // var cameraPosition = CameraPosition(
@@ -763,113 +936,63 @@ class _MapPage1State extends State<MapPage1> {
                     padding: EdgeInsets.all(5),
                     // margin: EdgeInsets.all(10),
                     // height: 120,
-                    child: Form(
-                      key: formKey,
-                      child: Row(
-                        children: <Widget>[
-                          buttonupdatePhoto(),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: Container(
-                              // margin: EdgeInsets.all(20),
-                              color: Colors.lightBlue[100],
-                              height: 110,
-                              width: divw / 1.4,
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: ListView(
-                                      scrollDirection: Axis.horizontal,
-                                      children: <Widget>[
-                                        showPhoto1(),
-                                        showPhoto2(),
-                                        showPhoto3(),
-                                      ],
-                                    ),
-                                  )
-                                  // Text('Photo')
-                                ],
-                              ),
+
+                    child: Row(
+                      children: <Widget>[
+                        buttonupdatePhoto(),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: Container(
+                            // margin: EdgeInsets.all(20),
+                            color: Colors.lightBlue[100],
+                            height: 110,
+                            width: divw / 1.4,
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: <Widget>[
+                                      showPhoto1(),
+                                      showPhoto2(),
+                                      showPhoto3(),
+                                    ],
+                                  ),
+                                )
+                                // Text('Photo')
+                              ],
                             ),
-                          )
-                        ],
-                      ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                   Container(
                     margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(
-                          height: 15.0,
-                        ),
-                        dropdoweBox(),
-                        SizedBox(
-                          height: 15.0,
-                        ),
-                        detailText(),
-                        SizedBox(height: 30),
-                        addMapTodatabase(),
-                      ],
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: 15.0,
+                          ),
+                          bottomDetailList(),
+                          SizedBox(
+                            height: 15.0,
+                          ),
+                          dropdoweBox(),
+                          SizedBox(
+                            height: 15.0,
+                          ),
+                          detailText(),
+                          SizedBox(height: 30),
+                          addMapTodatabase(),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               )
-
-              // Container(
-              //   // margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
-              //   child: Form(
-              //     key: formKey,
-              //     child: Column(
-              //       children: <Widget>[
-              //         Row(
-
-              //           children: <Widget>[
-              //             buttonupdatePhoto(),
-              //             Container(
-              //               width: 330.0,
-              //               height: 150,
-              //               color: Colors.blue,
-              //               child: Row(
-              //                 children: <Widget>[
-              //                   Expanded(
-              //                     child: ListView(
-              //                       scrollDirection: Axis.horizontal,
-              //                       children: <Widget>[
-              //                         showPhoto1(), showPhoto2(),showPhoto1(), showPhoto2()
-              //                       ],
-              //                     ),
-              //                   )
-              //                   // Text('Photo')
-              //                 ],
-              //               ),
-              //               // child: Row(
-              //               //   children: <Widget>[showPhoto1(), showPhoto2()],
-              //               // ),
-              //             )
-              //           ],
-              //         ),
-              //         Container(
-              //           margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
-              //           child: Column(
-              //             children: <Widget>[
-              //               SizedBox(
-              //                 height: 15.0,
-              //               ),
-              //               dropdoweBox(),
-              //               SizedBox(
-              //                 height: 15.0,
-              //               ),
-              //               detailText(),
-              //               SizedBox(height: 30),
-              //               addMapTodatabase(),
-              //             ],
-              //           ),
-              //         )
-              //       ],
-              //     ),
-              //   ),
-              // )
             ],
           ))
         ],
