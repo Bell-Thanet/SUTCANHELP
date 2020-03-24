@@ -45,7 +45,10 @@ dependencies:
   flutter_multiselect: ^0.4.0
   multiselect_formfield: ^0.1.2
   url_launcher: ^5.4.2
-  
+  icon_shadow: ^1.0.1
+  intl: ^0.16.1
+  firebase_messaging: ^6.0.13
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

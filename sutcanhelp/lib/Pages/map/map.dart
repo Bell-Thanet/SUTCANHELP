@@ -10,6 +10,9 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:sutcanhelp/Pages/home.dart';
+import 'package:sutcanhelp/widget/bottomNavigation.dart';
+import 'package:sutcanhelp/widget/loading.dart';
 import 'dart:async';
 import 'package:sutcanhelp/widget/multiSelectChip.dart';
 
@@ -29,7 +32,7 @@ class _MapPage1State extends State<MapPage1> {
   final Set<Marker> _markers = {};
   String posi1 = '...';
   LatLng po;
-
+  bool loading = false;
   @override
   void initState() {
     super.initState();
@@ -170,7 +173,7 @@ class _MapPage1State extends State<MapPage1> {
       child: FloatingActionButton.extended(
         onPressed: _goToMe,
         label: Text('My location'),
-        icon: Icon(Icons.near_me),
+        icon: Icon(Icons.room),
         heroTag: null,
       ),
     );
@@ -199,12 +202,68 @@ class _MapPage1State extends State<MapPage1> {
         // minWidth: MediaQuery.of(context).size.width,
         height: 50.0,
         onPressed: () {
-          if (selectedsos != null) {
-            formKey.currentState.save();
-            // uploadPhoto(context);
-            database();
+          // if (selectedsos != null) {
+          //   formKey.currentState.save();
+          //   // uploadPhoto(context);
+          //   database();
+          // } else {
+          //   print("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+          // }
+
+          if (selectedSOSList.length == 0 || posi1 == '...') {
+            Alert(
+                context: context,
+                title: 'ใส่ข้อมูลไม่ครบ',
+                //  desc: message,
+                type: AlertType.error,
+                buttons: [
+                  DialogButton(
+                    child: Text(
+                      'OK',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18.0),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ]).show();
           } else {
-            print("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+            formKey.currentState.save();
+            Alert(context: context, title: 'ต้องการส่งคำขอSOS หรือไม่',
+                //  desc: message,
+                // type: AlertType.error,
+                buttons: [
+                  DialogButton(
+                    child: Text(
+                      'OK',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18.0),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      setState(() {
+                        loading = true;
+                      });
+                      database();
+                    },
+                    color: Colors.green,
+                  ),
+                  DialogButton(
+                    child: Text(
+                      'Cancle',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18.0),
+                    ),
+                    color: Colors.red,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      print('XXXXXXXXXXXXXXXXXXX');
+                    },
+                  ),
+                ]).show();
+            // database();
+            // print('XXXXXXXXXXXXXXXXXXX');
           }
         },
         child: Text('SOS',
@@ -235,7 +294,7 @@ class _MapPage1State extends State<MapPage1> {
     Map<String, String> data = <String, String>{
       "User": userid,
       "Position": posi1,
-      "ระดับอาการ": selectedsos,
+      // "ระดับอาการ": selectedsos,
       "Detail": detail,
       "อาการ": selectedSOSList.join(","),
     };
@@ -712,11 +771,6 @@ class _MapPage1State extends State<MapPage1> {
       }
     }
     setURLImageToSOS(url1, url2, url3, documentIDSOS);
-    setState(() {
-      // Scaffold.of(context).showSnackBar(SnackBar(
-      //   content: Text("Profile Picture Update"),
-      // ));
-    });
   }
 
   Future<void> setURLImageToSOS(
@@ -737,7 +791,12 @@ class _MapPage1State extends State<MapPage1> {
             'documentIDSOS $documentIDSOS \t Update URL2 image To $url2 and Sucess');
         print(
             'documentIDSOS $documentIDSOS \t Update URL3 image To $url3 and Sucess');
+        loading = false;
       });
+      MaterialPageRoute materialPageRoute = MaterialPageRoute(
+          builder: (BuildContext context) => BottomNavigation());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
     }).catchError((e) => print(e));
   }
 
@@ -813,6 +872,14 @@ class _MapPage1State extends State<MapPage1> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
             ),
             onPressed: () {
+              if (selectedSOSList != []) {
+                setState(() {
+                  selectedSOSList = [];
+                });
+              }
+              // setState(() {
+              //   selectedSOSList = [];
+              // });
               Navigator.of(context).pop();
             },
           )
@@ -888,12 +955,19 @@ class _MapPage1State extends State<MapPage1> {
             onPressed: () {
               _showSosListDialog();
             },
-            child: Text('AA',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold)),
+            // child: Text(
+            //   'AA',
+            //   textAlign: TextAlign.center,
+            //   style: TextStyle(
+            //       color: Colors.white,
+            //       fontSize: 20.0,
+            //       fontWeight: FontWeight.bold),
+            // ),
+            child: Icon(
+              Icons.local_hospital,
+              color: Colors.white,
+              size: 25,
+            ),
           ),
           color: Colors.green[700],
         ),
@@ -908,96 +982,98 @@ class _MapPage1State extends State<MapPage1> {
     //   zoom: 16,
     // );
     var divw = MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(title: Text("SOS MAP"), actions: <Widget>[]),
-      body: Column(
-        children: <Widget>[
-          Stack(
-            children: <Widget>[
-              Container(
-                height: 220,
-                child: Stack(
+    return loading
+        ? Loading()
+        : Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(title: Center(child: Text("SOS MAP")), actions: <Widget>[]),
+            body: Column(
+              children: <Widget>[
+                Stack(
                   children: <Widget>[
-                    googlemap(),
-                    myLocationButton(),
+                    Container(
+                      height: 220,
+                      child: Stack(
+                        children: <Widget>[
+                          googlemap(),
+                          myLocationButton(),
+                        ],
+                      ),
+                    )
                   ],
                 ),
-              )
-            ],
-          ),
-          Expanded(
-              child: ListView(
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Container(
-                    // color: Colors.black54,
-                    padding: EdgeInsets.all(5),
-                    // margin: EdgeInsets.all(10),
-                    // height: 120,
-
-                    child: Row(
+                Expanded(
+                    child: ListView(
+                  children: <Widget>[
+                    Column(
                       children: <Widget>[
-                        buttonupdatePhoto(),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: Container(
-                            // margin: EdgeInsets.all(20),
-                            color: Colors.lightBlue[100],
-                            height: 110,
-                            width: divw / 1.4,
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: ListView(
-                                    scrollDirection: Axis.horizontal,
+                        Container(
+                          // color: Colors.black54,
+                          padding: EdgeInsets.all(5),
+                          // margin: EdgeInsets.all(10),
+                          // height: 120,
+
+                          child: Row(
+                            children: <Widget>[
+                              buttonupdatePhoto(),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(20.0),
+                                child: Container(
+                                  // margin: EdgeInsets.all(20),
+                                  color: Colors.lightBlue[100],
+                                  height: 110,
+                                  width: divw / 1.4,
+                                  child: Row(
                                     children: <Widget>[
-                                      showPhoto1(),
-                                      showPhoto2(),
-                                      showPhoto3(),
+                                      Expanded(
+                                        child: ListView(
+                                          scrollDirection: Axis.horizontal,
+                                          children: <Widget>[
+                                            showPhoto1(),
+                                            showPhoto2(),
+                                            showPhoto3(),
+                                          ],
+                                        ),
+                                      )
+                                      // Text('Photo')
                                     ],
                                   ),
-                                )
-                                // Text('Photo')
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
+                          child: Form(
+                            key: formKey,
+                            child: Column(
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 15.0,
+                                ),
+                                bottomDetailList(),
+                                SizedBox(
+                                  height: 15.0,
+                                ),
+                                // dropdoweBox(),
+                                // SizedBox(
+                                //   height: 15.0,
+                                // ),
+                                detailText(),
+                                SizedBox(height: 30),
+                                addMapTodatabase(),
                               ],
                             ),
                           ),
-                        )
+                        ),
                       ],
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
-                    child: Form(
-                      key: formKey,
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: 15.0,
-                          ),
-                          bottomDetailList(),
-                          SizedBox(
-                            height: 15.0,
-                          ),
-                          dropdoweBox(),
-                          SizedBox(
-                            height: 15.0,
-                          ),
-                          detailText(),
-                          SizedBox(height: 30),
-                          addMapTodatabase(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ))
-        ],
-      ),
-    );
+                    )
+                  ],
+                ))
+              ],
+            ),
+          );
   }
 }
 

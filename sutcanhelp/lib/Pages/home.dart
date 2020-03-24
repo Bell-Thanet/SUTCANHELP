@@ -2,17 +2,32 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:sutcanhelp/Pages/learnBook.dart';
 import 'package:sutcanhelp/Pages/map/map.dart';
 import 'package:sutcanhelp/Pages/pageone.dart';
 import 'package:sutcanhelp/Pages/profile.dart';
+import 'package:sutcanhelp/Pages/repairComputer.dart';
+import 'package:sutcanhelp/Pages/sosAnimal.dart';
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
+}
+
+class Message {
+  String title;
+  String body;
+  String message;
+  Message(title, body, message) {
+    this.title = title;
+    this.body = body;
+    this.message = message;
+  }
 }
 
 class _HomeState extends State<Home> {
@@ -30,6 +45,43 @@ class _HomeState extends State<Home> {
     // getdata();
     // showDrawer();
     // showHeader();
+    _messages = List<Message>();
+    _getToken();
+    _configureFirebaseListeners();
+  }
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  List<Message> _messages;
+  _getToken() {
+    _firebaseMessaging.getToken().then((deviceToken) {
+      print("Device Token: $deviceToken");
+    });
+  }
+
+  _configureFirebaseListeners() {
+    _firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async {
+      print('onMessage: $message');
+      _setMessage(message);
+    }, onLaunch: (Map<String, dynamic> message) async {
+      print('onMessage: $message');
+      _setMessage(message);
+    }, onResume: (Map<String, dynamic> message) async {
+      print('onMessage: $message');
+      _setMessage(message);
+    });
+  }
+
+  _setMessage(Map<String, dynamic> message) {
+    final notification = message['notification'];
+    final data = message['data'];
+    final String title = notification['title'];
+    final String body = notification['body'];
+    final String mMessage = data['message'];
+    setState(() {
+      Message m = Message(title, body, message);
+      _messages.add(m);
+    });
   }
 
   void getdata() async {
@@ -129,8 +181,11 @@ class _HomeState extends State<Home> {
     return Drawer(
       child: ListView(
         children: <Widget>[
-          showHeader(),
-          profileList(),
+          // showHeader(),
+          // profileList(),
+          sosAnimal(),
+          repairComputer(),
+          learnbook(),
           logoutList(),
         ],
       ),
@@ -151,6 +206,53 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Widget sosAnimal() {
+    return ListTile(
+      leading: Icon(Icons.pets),
+      title: Text('จับสัตว์',
+          style: TextStyle(
+            fontSize: 18.0,
+          )),
+      onTap: () {
+        MaterialPageRoute materialPageRoute =
+            MaterialPageRoute(builder: (BuildContext context) => SosAnimal());
+        Navigator.of(context).pushAndRemoveUntil(
+            materialPageRoute, (Route<dynamic> route) => true);
+      },
+    );
+  }
+
+  Widget repairComputer() {
+    return ListTile(
+      leading: Icon(Icons.computer),
+      title: Text('ซ้อมคออมพิวเตอร์',
+          style: TextStyle(
+            fontSize: 18.0,
+          )),
+      onTap: () {
+        MaterialPageRoute materialPageRoute = MaterialPageRoute(
+            builder: (BuildContext context) => RepairComputer());
+        Navigator.of(context).pushAndRemoveUntil(
+            materialPageRoute, (Route<dynamic> route) => true);
+      },
+    );
+  }
+
+  Widget learnbook() {
+    return ListTile(
+      leading: Icon(Icons.book),
+      title: Text('นัดติวหนังสือ',
+          style: TextStyle(
+            fontSize: 18.0,
+          )),
+      onTap: () {
+        MaterialPageRoute materialPageRoute =
+            MaterialPageRoute(builder: (BuildContext context) => LearnBook());
+        Navigator.of(context).pushAndRemoveUntil(
+            materialPageRoute, (Route<dynamic> route) => true);
+      },
+    );
+  }
   // Widget showLogoActornull() {
   //   return Container(
   //     width: 80.0,
@@ -419,8 +521,7 @@ class _HomeState extends State<Home> {
           singoutButton(),
         ],
       ),
-      // drawer: showDrawer(),
-
+      drawer: showDrawer(),
       drawerScrimColor: Colors.white30,
       body: Container(
           // width: MediaQuery.of(context).size.width,

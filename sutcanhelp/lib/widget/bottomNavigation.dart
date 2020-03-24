@@ -1,7 +1,9 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:sutcanhelp/Pages/firstAid.dart';
 import 'package:sutcanhelp/Pages/home.dart';
+import 'package:sutcanhelp/Pages/listLearnBook.dart';
 import 'package:sutcanhelp/Pages/map/map.dart';
 import 'package:sutcanhelp/Pages/profile.dart';
 import 'package:sutcanhelp/Pages/telephone.dart';
@@ -11,8 +13,10 @@ class BottomNavigation extends StatefulWidget {
   _BottomNavigationState createState() => _BottomNavigationState();
 }
 
+
 class _BottomNavigationState extends State<BottomNavigation> {
   Widget page = Home();
+
 
   Widget logoutList() {
     return ListTile(
@@ -34,7 +38,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         // // loader1();
         // myAlert();
         setState(() {
-          page=Profile();
+          page = Profile();
         });
       },
     );
@@ -55,7 +59,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: showDrawer(),
+      // drawer: showDrawer(),
       body: page,
       bottomNavigationBar: CurvedNavigationBar(
         color: Colors.blue,
@@ -81,7 +85,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
               break;
             case 1:
               setState(() {
-                page = Home();
+                page = ListLearnBook();
               });
               break;
             case 2:

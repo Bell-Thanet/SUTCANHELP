@@ -251,21 +251,24 @@ class _FirstAidState extends State<FirstAid> {
                                 height:
                                     MediaQuery.of(context).size.height * 0.20,
                                 width: MediaQuery.of(context).size.width * .4,
-                                child: CachedNetworkImage(
-                                  imageUrl: soslists[rowIdx].image,
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(24.0),
+                                  child: CachedNetworkImage(
+                                    imageUrl: soslists[rowIdx].image,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
                                   ),
-                                  placeholder: (context, url) =>
-                                      CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      Icon(Icons.error),
                                 ),
 
                                 // ClipRRect(

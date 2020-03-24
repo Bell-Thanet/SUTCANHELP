@@ -161,3 +161,8 @@ doc/api/
 *.js_
 *.js.deps
 *.js.map
+
+.dart_tool/
+.packages
+build/
+pubspec.lock  // Except for application packages

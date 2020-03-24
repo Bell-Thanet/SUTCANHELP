@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -22,6 +23,22 @@ class _RegisterPageState extends State<RegisterPage> {
   final formKey = GlobalKey<FormState>();
   String emailString, passString, nameString, repassString;
   bool loading = false;
+  String deviceToken1;
+  @override
+  void initState() {
+    super.initState();
+    _getToken();
+  }
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  _getToken() {
+    _firebaseMessaging.getToken().then((deviceToken) {
+      print("Device Token: $deviceToken");
+      setState(() {
+        deviceToken1 = deviceToken;
+      });
+    });
+  }
 
   // Widget registerButton() {
   //   return Material(
@@ -88,7 +105,6 @@ class _RegisterPageState extends State<RegisterPage> {
               passAlert();
             }
           }
-          
 
           setState(() {
             loading = false;
@@ -407,6 +423,7 @@ class _RegisterPageState extends State<RegisterPage> {
       //   setupUser();
       // });
       setupUser();
+      setupTokens();
       print('Register Success for Email = $emailString');
     }).catchError((response) {
       String title = response.code;
@@ -440,6 +457,21 @@ class _RegisterPageState extends State<RegisterPage> {
     documentReference.setData(data).whenComplete(() {
       print(
           "Email: $emailString /t Password: $passString /t Name: $nameString /t URL: null ");
+    }).catchError((e) => print(e));
+  }
+
+  Future<void> setupTokens() async {
+    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    var userid = user.uid.toString();
+
+    final DocumentReference documentReference =
+        Firestore.instance.collection('UserTokens').document(userid);
+    Map<String, String> data = <String, String>{
+      "device_token": deviceToken1,
+    };
+    documentReference.setData(data).whenComplete(() {
+      print(
+          "Token: $deviceToken1");
     }).catchError((e) => print(e));
 
     // setState(() {
