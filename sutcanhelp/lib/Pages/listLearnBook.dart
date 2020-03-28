@@ -39,7 +39,8 @@ class _ListLearnBookState extends State<ListLearnBook> {
     Firestore firestore = Firestore.instance;
     CollectionReference collectionReference =
         firestore.collection("LearnBookSOS");
-    await collectionReference.snapshots().listen((response) {
+        Query query = collectionReference.orderBy("Timestamp",descending: true);
+    await query.snapshots().listen((response) {
       List<DocumentSnapshot> snapshots = response.documents;
       try {
         for (var snapshot in snapshots) {
@@ -53,6 +54,9 @@ class _ListLearnBookState extends State<ListLearnBook> {
       }
     });
   }
+  // Future<void> readAllLearnBookSOS() async {
+  //  Firestore firestore = Firestore.instance.collection("LearnBookSOS").orderBy("Date",descending: true).snapshots(Q);
+  // }
 
   showlistview(int index) {
     if (soslists[index].location != null &&
@@ -74,7 +78,7 @@ class _ListLearnBookState extends State<ListLearnBook> {
                 SizedBox(width: 10),
                 Text(soslists[index].location),
                 SizedBox(width: 10),
-                Text(soslists[index].time+' / '+soslists[index].date),
+                Text(soslists[index].time + ' / ' + soslists[index].date),
               ],
             ),
           ),

@@ -771,6 +771,7 @@ class _SosAnimalState extends State<SosAnimal> {
       // "ระดับอาการ": selectedsos,
       "Detail": detail,
       "Animal": selectedAnimalList.join(","),
+      "Timestamp": DateTime.now().toString(),
     };
 
     documentReference.setData(data).whenComplete(() {
@@ -842,13 +843,47 @@ class _SosAnimalState extends State<SosAnimal> {
         print(
             'documentIDSOS $documentIDSOS \t Update URL3 image To $url3 and Sucess');
         loading = false;
+
+        Alert(
+            context: context,
+            title: 'แจ้งSOSสำเร็จ',
+            style: alertStyle,
+            buttons: [
+              DialogButton(
+                child: Text(
+                  'OK',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  MaterialPageRoute materialPageRoute = MaterialPageRoute(
+                      builder: (BuildContext context) => BottomNavigation());
+                  Navigator.of(context).pushAndRemoveUntil(
+                      materialPageRoute, (Route<dynamic> route) => false);
+                },
+              ),
+            ]).show();
       });
-      MaterialPageRoute materialPageRoute = MaterialPageRoute(
-          builder: (BuildContext context) => BottomNavigation());
-      Navigator.of(context).pushAndRemoveUntil(
-          materialPageRoute, (Route<dynamic> route) => false);
     }).catchError((e) => print(e));
   }
+
+  var alertStyle = AlertStyle(
+    animationType: AnimationType.fromTop,
+    isCloseButton: false,
+    isOverlayTapDismiss: false,
+    descStyle: TextStyle(fontWeight: FontWeight.bold),
+    animationDuration: Duration(milliseconds: 300),
+    alertBorder: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
+      side: BorderSide(
+        color: Colors.black,
+      ),
+    ),
+    titleStyle: TextStyle(
+      color: Colors.black,
+    ),
+  );
+
   //******************************** */
 
   @override

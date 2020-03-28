@@ -297,6 +297,7 @@ class _MapPage1State extends State<MapPage1> {
       // "ระดับอาการ": selectedsos,
       "Detail": detail,
       "อาการ": selectedSOSList.join(","),
+      "Timestamp": DateTime.now().toString(),
     };
 
     documentReference.setData(data).whenComplete(() {
@@ -792,14 +793,46 @@ class _MapPage1State extends State<MapPage1> {
         print(
             'documentIDSOS $documentIDSOS \t Update URL3 image To $url3 and Sucess');
         loading = false;
+
+        Alert(
+            context: context,
+            title: 'แจ้งSOSสำเร็จ',
+            style: alertStyle,
+            buttons: [
+              DialogButton(
+                child: Text(
+                  'OK',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  MaterialPageRoute materialPageRoute = MaterialPageRoute(
+                      builder: (BuildContext context) => BottomNavigation());
+                  Navigator.of(context).pushAndRemoveUntil(
+                      materialPageRoute, (Route<dynamic> route) => false);
+                },
+              ),
+            ]).show();
       });
-      MaterialPageRoute materialPageRoute = MaterialPageRoute(
-          builder: (BuildContext context) => BottomNavigation());
-      Navigator.of(context).pushAndRemoveUntil(
-          materialPageRoute, (Route<dynamic> route) => false);
     }).catchError((e) => print(e));
   }
 
+  var alertStyle = AlertStyle(
+    animationType: AnimationType.fromTop,
+    isCloseButton: false,
+    isOverlayTapDismiss: false,
+    descStyle: TextStyle(fontWeight: FontWeight.bold),
+    animationDuration: Duration(milliseconds: 300),
+    alertBorder: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
+      side: BorderSide(
+        color: Colors.black,
+      ),
+    ),
+    titleStyle: TextStyle(
+      color: Colors.black,
+    ),
+  );
   List<String> reportList = [/*Data Hascode*/];
   List<String> selectedSOSList = List();
 
@@ -986,7 +1019,8 @@ class _MapPage1State extends State<MapPage1> {
         ? Loading()
         : Scaffold(
             backgroundColor: Colors.white,
-            appBar: AppBar(title: Center(child: Text("SOS MAP")), actions: <Widget>[]),
+            appBar: AppBar(
+                title: Center(child: Text("SOS MAP")), actions: <Widget>[]),
             body: Column(
               children: <Widget>[
                 Stack(

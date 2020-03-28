@@ -181,12 +181,12 @@ class _HomeState extends State<Home> {
     return Drawer(
       child: ListView(
         children: <Widget>[
-          // showHeader(),
+          showHeader(),
           // profileList(),
           sosAnimal(),
           repairComputer(),
           learnbook(),
-          logoutList(),
+          // logoutList(),
         ],
       ),
     );
@@ -194,21 +194,17 @@ class _HomeState extends State<Home> {
 
   Widget showHeader() {
     return DrawerHeader(
-      child: Column(
-        children: <Widget>[
-          logoCircle(),
-          SizedBox(height: 15.0),
-          showNameLogin(),
-          showEmailLogin(),
-        ],
-      ),
+      child: Image(image: AssetImage('images/logoSUTCANHELP.png')),
       decoration: BoxDecoration(color: Colors.blue.shade700),
     );
   }
 
   Widget sosAnimal() {
     return ListTile(
-      leading: Icon(Icons.pets),
+      leading: Icon(
+        Icons.pets,
+        color: Colors.blue,
+      ),
       title: Text('จับสัตว์',
           style: TextStyle(
             fontSize: 18.0,
@@ -224,7 +220,10 @@ class _HomeState extends State<Home> {
 
   Widget repairComputer() {
     return ListTile(
-      leading: Icon(Icons.computer),
+      leading: Icon(
+        Icons.computer,
+        color: Colors.blue,
+      ),
       title: Text('ซ้อมคออมพิวเตอร์',
           style: TextStyle(
             fontSize: 18.0,
@@ -240,7 +239,10 @@ class _HomeState extends State<Home> {
 
   Widget learnbook() {
     return ListTile(
-      leading: Icon(Icons.book),
+      leading: Icon(
+        Icons.book,
+        color: Colors.blue,
+      ),
       title: Text('นัดติวหนังสือ',
           style: TextStyle(
             fontSize: 18.0,

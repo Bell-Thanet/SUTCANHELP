@@ -70,6 +70,8 @@ flutter:
    - images/logoActor.jpg
    - assets/map_style.json
    - images/logoActor.png
+   - images/book.png
+   - images/logoSUTCANHELP.png
 
   #  - images/a_dot_ham.jpeg
 

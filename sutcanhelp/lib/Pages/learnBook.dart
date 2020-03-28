@@ -60,33 +60,35 @@ class _LearnBookState extends State<LearnBook> {
   }
 
   Widget subjectText() {
-    return TextFormField(
-      decoration: InputDecoration(
-        // fillColor: Colors.lightBlue[100],
-        filled: true,
-        hintText: "วิชาที่ต้องการติว",
-        hintStyle: TextStyle(
-          color: Colors.black,
-          fontSize: 16.0,
+    return Container(
+      child: TextFormField(
+        decoration: InputDecoration(
+          // fillColor: Colors.lightBlue[100],
+          filled: true,
+          hintText: "วิชาที่ต้องการติว",
+          hintStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 16.0,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          prefixIcon: Icon(
+            Icons.book,
+            color: Colors.blue[600],
+          ),
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        prefixIcon: Icon(
-          Icons.book,
-          color: Colors.blue[600],
-        ),
+        validator: (String value) {
+          if (value.isEmpty) {
+            return 'Please Fill Your Name in the Blank';
+          } else {
+            return null;
+          }
+        },
+        onSaved: (String s) {
+          subject = s;
+        },
       ),
-      validator: (String value) {
-        if (value.isEmpty) {
-          return 'Please Fill Your Name in the Blank';
-        } else {
-          return null;
-        }
-      },
-      onSaved: (String s) {
-        subject = s;
-      },
     );
   }
 
@@ -278,14 +280,14 @@ class _LearnBookState extends State<LearnBook> {
             // print('XXXXXXXXXXXXXXXXXXX');
           }
         },
-        child: Text('SOS',
+        child: Text('หาเพื่อนติว',
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 25.0,
                 fontWeight: FontWeight.bold)),
       ),
-      color: Colors.redAccent[700],
+      color: Colors.green[700],
     );
   }
 
@@ -305,13 +307,15 @@ class _LearnBookState extends State<LearnBook> {
       "Location": location,
       "Time": time,
       "Date": date,
+      "Timestamp": DateTime.now().toString(),
       // "Position": posi1,
       // "ระดับอาการ": selectedsos,
       // "Detail": detail,
     };
 
     documentReference.setData(data).whenComplete(() {
-      print("User: $userid \t Subject: $subject  \t Location $location \t Time $time \t Date $date");
+      print(
+          "User: $userid \t Subject: $subject  \t Location $location \t Time $time \t Date $date \t Timestamp ${DateTime.now().toString()}");
 
       // print(
       //     "Email: $emailString /t Password: $passString /t Name: $nameString /t URL: null ");
@@ -319,14 +323,112 @@ class _LearnBookState extends State<LearnBook> {
 
     setState(() {
       loading = false;
-      MaterialPageRoute materialPageRoute = MaterialPageRoute(
-          builder: (BuildContext context) => BottomNavigation());
-      Navigator.of(context).pushAndRemoveUntil(
-          materialPageRoute, (Route<dynamic> route) => false);
+      Alert(
+          context: context,
+          title: 'แจ้งติวสำเร็จ',
+          style: alertStyle,
+          buttons: [
+            DialogButton(
+              child: Text(
+                'OK',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                MaterialPageRoute materialPageRoute = MaterialPageRoute(
+                    builder: (BuildContext context) => BottomNavigation());
+                Navigator.of(context).pushAndRemoveUntil(
+                    materialPageRoute, (Route<dynamic> route) => false);
+              },
+            ),
+          ]).show();
     });
   }
 
+  var alertStyle = AlertStyle(
+    animationType: AnimationType.fromTop,
+    isCloseButton: false,
+    isOverlayTapDismiss: false,
+    descStyle: TextStyle(fontWeight: FontWeight.bold),
+    animationDuration: Duration(milliseconds: 300),
+    alertBorder: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
+      side: BorderSide(
+        color: Colors.black,
+      ),
+    ),
+    titleStyle: TextStyle(
+      color: Colors.black,
+    ),
+  );
+
   //******************************** */
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   var divw = MediaQuery.of(context).size.width;
+  //   return loading
+  //       ? Loading()
+  //       : Scaffold(
+  //           backgroundColor: Colors.white,
+  //           appBar: AppBar(
+  //             title: Center(
+  //               child: Text('ติวหนังสือ'),
+  //             ),
+  //           ),
+  //           body: ListView(
+  //             children: <Widget>[
+  //               Column(
+  //                 children: <Widget>[
+  //                   Center(
+  //                     child: Container(
+  //                       width: divw / 2,
+  //                       height: divw / 2,
+  //                       child: Center(
+  //                         child: IconShadowWidget(
+  //                           Icon(
+  //                             Icons.chrome_reader_mode,
+  //                             size: divw / 2,
+  //                             color: Colors.lightBlueAccent,
+  //                           ),
+  //                           shadowColor: Colors.black,
+  //                           showShadow: true,
+  //                         ),
+  //                         // Icon(
+  //                         //   Icons.chrome_reader_mode,
+  //                         //   size: divw / 2,
+  //                         //   color: Colors.lightBlueAccent[700],
+  //                         // ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   Container(
+  //                     margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
+  //                     child: Form(
+  //                       key: formKey,
+  //                       child: Column(
+  //                         children: <Widget>[
+  //                           SizedBox(height: 15.0),
+  //                           subjectText(),
+  //                           SizedBox(height: 30),
+  //                           locationText(),
+  //                           SizedBox(height: 30),
+  //                           timeText(),
+  //                           SizedBox(height: 30),
+  //                           dateText(),
+  // addDataTodatabase(),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ));
+  // }
+  Widget logoimage() {
+    return Image(image: AssetImage('images/book.png'));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -340,54 +442,54 @@ class _LearnBookState extends State<LearnBook> {
                 child: Text('ติวหนังสือ'),
               ),
             ),
-            body: ListView(
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Center(
-                      child: Container(
-                        width: divw / 2,
-                        height: divw / 2,
-                        child: Center(
-                          child: IconShadowWidget(
-                            Icon(
-                              Icons.chrome_reader_mode,
-                              size: divw / 2,
-                              color: Colors.lightBlueAccent,
-                            ),
-                            shadowColor: Colors.black,
-                            showShadow: true,
+                Container(
+                  height: 200,
+                  width: divw,
+                  color: Colors.blue.shade300,
+                  child: logoimage(),
+                ),
+                Expanded(
+                  child: ListView(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
+                        child: Form(
+                          key: formKey,
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 15.0),
+                              subjectText(),
+                              SizedBox(height: 15),
+                              locationText(),
+                              SizedBox(height: 30),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Container(
+                                    width: divw / 2.6,
+                                    child: timeText(),
+                                  ),
+                                  Container(
+                                    width: divw / 2.6,
+                                    child: dateText(),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 30),
+                              addDataTodatabase(),
+                            ],
                           ),
-                          // Icon(
-                          //   Icons.chrome_reader_mode,
-                          //   size: divw / 2,
-                          //   color: Colors.lightBlueAccent[700],
-                          // ),
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
-                      child: Form(
-                        key: formKey,
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(height: 15.0),
-                            subjectText(),
-                            SizedBox(height: 30),
-                            locationText(),
-                            SizedBox(height: 30),
-                            timeText(),
-                            SizedBox(height: 30),
-                            dateText(),
-                            addDataTodatabase(),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
-            ));
+            ),
+          );
   }
 }
